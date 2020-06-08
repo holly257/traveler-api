@@ -1,0 +1,4 @@
+CREATE TABLE days (
+    id SERIAL PRIMARY KEY, 
+    trip_id INTEGER REFERENCES trips(id) ON DELETE SET NULL
+);
