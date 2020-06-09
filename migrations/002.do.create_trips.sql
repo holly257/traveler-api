@@ -4,5 +4,5 @@ CREATE TABLE trips (
     city TEXT NOT NULL,
     country TEXT NOT NULL,
     date_created TIMESTAMPTZ NOT NULL DEFAULT now(),
-    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );

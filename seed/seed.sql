@@ -15,12 +15,14 @@ INSERT INTO trips (name, city, country, user_id)
 
 
 
---might have to rethink days table
---does it need to track trip_id and activity ids?
 INSERT INTO days (trip_id)
     VALUES
         (1),
-        (2);
+        (2),
+        (1),
+        (3),
+        (3),
+        (3);
 
 
 
@@ -30,9 +32,11 @@ INSERT INTO activities (activity, meridiem, start_time, day_id)
         ('breakfast at cafe', 'am', 9, 1),
         ('get up', 'am', 10, 2),
         ('breakfast at restaurant', 'am', 11, 2),
-        ('wake up', 'am', 9, 2),
-        ('breakfast on beach', 'am', , 2),
-        ;
+        ('wake up', 'am', 9, 3),
+        ('breakfast on beach', 'am', 11, 3),
+        ('breakfast', 'am', 10, 4),
+        ('wake up', 'am', 10, 5),
+        ('breakfast and coffee', 'am', 11, 6);
 
 
 

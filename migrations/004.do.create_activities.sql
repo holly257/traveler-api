@@ -1,14 +1,16 @@
+BEGIN;
+
 CREATE TYPE meridiem_category AS ENUM (
     'am',
-    'pm',
+    'pm'
 );
 
 CREATE TABLE activities (
     id SERIAL PRIMARY KEY, 
     activity TEXT NOT NULL,
     meridiem meridiem_category,
-    start_time INTEGER NOT NULL,
-    day_id INTEGER REFERENCES days(id) ON DELETE SET NULL
+    start_time TIME NOT NULL,
+    day_id INTEGER REFERENCES days(id) ON DELETE CASCADE
 );
 
---using begin/commit with creating type and table
+COMMIT;
