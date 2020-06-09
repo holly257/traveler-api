@@ -9,7 +9,7 @@ CREATE TABLE activities (
     id SERIAL PRIMARY KEY, 
     activity TEXT NOT NULL,
     meridiem meridiem_category,
-    start_time TIME NOT NULL,
+    start_time INTEGER NOT NULL,
     day_id INTEGER REFERENCES days(id) ON DELETE CASCADE
 );
 
