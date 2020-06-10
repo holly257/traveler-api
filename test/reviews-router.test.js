@@ -120,7 +120,7 @@ describe('reviews-router endpoints', () => {
                 user_id: 3,
                 image_alt: 'Other Mifflin Paper Company'
             }
-            it.only(`responds with 400 and an error when the '${field}' is missing`, () => {
+            it(`responds with 400 and an error when the '${field}' is missing`, () => {
                 delete reqNewReview[field]
                 return supertest(app)
                     .post('/api/reviews')

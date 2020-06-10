@@ -57,6 +57,33 @@ function makeTestReviews() {
     ]
 }
 
+function makeTestTrips() {
+    return [
+        {
+            id: 1,
+            name: 'Weekend Trip',
+            city: 'test city',
+            country: 'USA',
+            user_id: 1
+        },
+        {
+            id: 2,
+            name: 'Other Trip',
+            city: 'New city',
+            country: 'Thailand',
+            user_id: 1
+        },
+        {
+            id: 3,
+            name: 'Last one',
+            city: 'City Name',
+            country: 'South Africa',
+            user_id: 2
+        },
+    ]
+}
+
+
 function cleanTables(db) {
     return db.raw(
       `TRUNCATE
@@ -107,6 +134,7 @@ module.exports = {
     makeTestUsers,
     makeTestReviews,
     makeMaliciousReview,
+    makeTestTrips,
 
     cleanTables,
 }
