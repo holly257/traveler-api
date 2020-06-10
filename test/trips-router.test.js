@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe.only('trips-router endpoints', () => {
+describe('trips-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     let testTrips = helpers.makeTestTrips()
@@ -65,7 +65,6 @@ describe.only('trips-router endpoints', () => {
         })
 
         it('POST /api/trips responds with 201 and the new review', () => {
-            // this.retries(3)
             const newTrip = {
                 name: 'another new Trip',
                 city: 'test new city',
@@ -95,7 +94,6 @@ describe.only('trips-router endpoints', () => {
                 )
             })
 
-        //postman gets correct error thrown, test not working
         const requiredFields = ['name', 'city', 'country', 'user_id']
         requiredFields.forEach(field => {
             const reqNewTrip = {
@@ -104,7 +102,7 @@ describe.only('trips-router endpoints', () => {
                 country: 'USA', 
                 user_id: 2,
             }
-            it.only(`responds with 400 and an error when the '${field}' is missing`, () => {
+            it(`responds with 400 and an error when the '${field}' is missing`, () => {
                 delete reqNewTrip[field]
                 return supertest(app)
                     .post('/api/trips')

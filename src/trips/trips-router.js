@@ -34,7 +34,7 @@ tripsRouter
 
         for(const [key, value] of Object.entries(newTrip)) {
             if (value ==  null) {
-                return res.status(404).json({
+                return res.status(400).json({
                     error: { message: `Missing ${key} in request body`}
                 })
             }

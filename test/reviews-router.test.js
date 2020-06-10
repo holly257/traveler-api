@@ -65,7 +65,6 @@ describe('reviews-router endpoints', () => {
         })
 
         it('POST /api/reviews responds with 201 and the new review', () => {
-            // this.retries(3)
             const newReview = {
                 name: 'Other Mifflin',
                 image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Dunder_Mifflin%2C_Inc.svg/1200px-Dunder_Mifflin%2C_Inc.svg.png', 
@@ -107,7 +106,6 @@ describe('reviews-router endpoints', () => {
                 )
             })
 
-        //postman gets correct error thrown, test not working
         const requiredFields = ['name', 'city', 'country', 'rating', 'category', 'comments', 'user_id']
         requiredFields.forEach(field => {
             const reqNewReview = {
