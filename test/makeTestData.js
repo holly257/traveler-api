@@ -30,7 +30,7 @@ function makeTestReviews() {
             id: 1,
             name: 'Dunder Mifflin',
             image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Dunder_Mifflin%2C_Inc.svg/1200px-Dunder_Mifflin%2C_Inc.svg.png', 
-            image_alt: 'Dunder Mifflie Paper Company', 
+            image_alt: 'Dunder Mifflin Paper Company', 
             city: 'Scranton', 
             country: 'USA', 
             date_created: '2020-06-09T20:37:33.162Z',
@@ -100,7 +100,8 @@ function makeMaliciousReview(review) {
       expectedReview,
     }
   }
-  
+//   regex for url sanitizing 
+//if no image_alt, name.value + ' image'
 
 module.exports = {
     makeTestUsers,
