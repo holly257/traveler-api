@@ -170,7 +170,7 @@ describe('reviews-router endpoints', () => {
                     expect(res.body.comments).to.eql(expectedReview.comments)
                 })
         })
-        it(`POST /api/reviews/ removes xss content`, () => {
+        it(`POST /api/reviews removes xss content`, () => {
             return supertest(app)
                 .post(`/api/reviews`)
                 .send(maliciousReview)

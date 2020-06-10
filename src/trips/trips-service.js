@@ -3,12 +3,12 @@ const TripsService = {
         return db.select('*').from('trips')
     },
 
-    // insertTrip(db, newTrip) {
-    //     return db.insert(newTrip).into('trips')
-    //         .returning('*').then(rows => {
-    //             return rows[0]
-    //         })
-    // },
+    insertTrip(db, newTrip) {
+        return db.insert(newTrip).into('trips')
+            .returning('*').then(rows => {
+                return rows[0]
+            })
+    },
 
     getById(db, id) {
         return db.from('trips').select('*')

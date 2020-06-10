@@ -64,6 +64,7 @@ function makeTestTrips() {
             name: 'Weekend Trip',
             city: 'test city',
             country: 'USA',
+            date_created: '2020-06-08T20:37:33.162Z',
             user_id: 1
         },
         {
@@ -71,6 +72,7 @@ function makeTestTrips() {
             name: 'Other Trip',
             city: 'New city',
             country: 'Thailand',
+            date_created: '2020-06-08T20:37:33.162Z',
             user_id: 1
         },
         {
@@ -78,6 +80,7 @@ function makeTestTrips() {
             name: 'Last one',
             city: 'City Name',
             country: 'South Africa',
+            date_created: '2020-06-09T20:37:33.162Z',
             user_id: 2
         },
     ]
@@ -126,15 +129,41 @@ function makeMaliciousReview(review) {
       maliciousReview,
       expectedReview,
     }
-  }
+}
+
+function makeMaliciousTrip(trip) {
+    const maliciousTrip = {
+        id: 911,
+        name: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+        city: 'Naughty naughty very naughty <script>alert("xss");</script>', 
+        country: 'Naughty naughty very naughty <script>alert("xss");</script>', 
+        date_created: new Date().toISOString(),
+        user_id: 1,
+        
+    }
+    const expectedTrip = {
+        id: 911,
+        name: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
+        city: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
+        country: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
+        date_created: new Date().toISOString(),
+        user_id: 1,
+    }
+    return {
+      maliciousTrip,
+      expectedTrip,
+    }
+}
 //   regex for url sanitizing 
 //if no image_alt, name.value + ' image'
 
 module.exports = {
     makeTestUsers,
     makeTestReviews,
-    makeMaliciousReview,
     makeTestTrips,
+    
+    makeMaliciousReview,
+    makeMaliciousTrip,
 
     cleanTables,
 }

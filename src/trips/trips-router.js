@@ -11,6 +11,7 @@ const sanitizeTrips = trip => ({
     name: xss(trip.name),
     city: xss(trip.city), 
     country: xss(trip.country),
+    date_created: trip.date_created,
     user_id: trip.user_id
 })
 
@@ -26,30 +27,30 @@ tripsRouter
             })
             .catch(next)
     })
-    // .post(jsonParser, (req, res, next) => {
-    //     const db = req.app.get('db')
-    //     const { name, image, image_alt, city, country, address, rating, category, comments, user_id } =  req.body
-    //     const newReview = { name, image, image_alt, city, country, address, rating, category, comments, user_id }
+    .post(jsonParser, (req, res, next) => {
+        const db = req.app.get('db')
+        const { name, city, country, user_id } =  req.body
+        const newTrip = { name, city, country, user_id }
 
-    //     const required = { name, city, country, rating, category, comments, user_id }
+        for(const [key, value] of Object.entries(newTrip)) {
+            if (value ==  null) {
+                return res.status(404).json({
+                    error: { message: `Missing ${key} in request body`}
+                })
+            }
+        }
 
-    //         for(const [key, value] of Object.entries(required)) {
-    //             if (value ==  null) {
-    //                 return res.status(404).json({
-    //                     error: { message: `Missing ${key} in request body`}
-    //                 })
-    //             }
-    //         }
+        TripsService.insertTrip(db, newTrip)
+            .then(trip => {
+                res
+                    .status(201)
+                    .location(path.posix.join(req.originalUrl, `/${trip.id}`))
+                    .json(sanitizeTrips(trip))
+            })
+            .catch(next)
+    })
 
-    //     ReviewsService.insertReview(db, newReview)
-    //         .then(review => {
-    //             res
-    //                 .status(201)
-    //                 .location(path.posix.join(req.originalUrl, `/${review.id}`))
-    //                 .json(sanitizeReviews(review))
-    //         })
-    //         .catch(next)
-    // })
+    //need tests for post
 
 
 tripsRouter
