@@ -73,6 +73,17 @@ tripsRouter
     })
     .get((req, res, next) => {
         res.json(sanitizeTrips(res.trip))
-})
+    })
+    .delete((req, res, next) => {
+        const db = req.app.get('db')
+        const id = req.params.trip_id
+
+        TripsService.deleteTrip(db, id)
+            .then(trip =>
+                res.status(204).end()
+            )
+            .catch(next)
+    })
+
 
 module.exports = tripsRouter

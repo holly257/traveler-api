@@ -15,9 +15,9 @@ const TripsService = {
             .where('id', id).first()
     },
 
-    // deleteTrip(db, id) {
-    //     return db('trips').where({ id }).delete()
-    // },
+    deleteTrip(db, id) {
+        return db('trips').where({ id }).delete()
+    },
 
     // updateTrip(db, id, newTripInfo) {
     //     return db('trips').where({ id }).update(newTripInfo)

@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe('trips-router endpoints', () => {
+describe.only('trips-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     let testTrips = helpers.makeTestTrips()
@@ -28,7 +28,6 @@ describe('trips-router endpoints', () => {
             return db.into('trips').insert(testTrips)
         })
 
-
         it(`GET /api/trips responds with 200 and all of the reviews`, () => {
             return supertest(app)
                 .get('/api/trips')
@@ -41,28 +40,44 @@ describe('trips-router endpoints', () => {
                 .get(`/api/trips/${trip_id}`)
                 .expect(200, expectedTrip)
         })
-           
-        
+        it('DELETE /api/trips/:trip_id responds with 204 and removes the trip', () => {
+            const trip_id = 1
+            const expectedTrips = testTrips.filter(trip => trip.id !== trip_id)
+            return supertest(app)
+                .delete(`/api/trips/${trip_id}`)
+                .expect(204)
+                .then(res => 
+                    supertest(app)
+                        .get('/api/trips')
+                        .expect(expectedTrips)
+                )
+        })
     })
 
     
     context('Given no trips in the database', () => {
-        describe('GET /api/trips', () => {
-            it(`responds with 200 and an empty list`, () => {
-                return supertest(app)
-                .get('/api/trips')
-                .expect(200, [])
-            })
-            it('GET /api/trips/:trip_id responds with 404', () => {
-                const trip_id = 123
-                return supertest(app)
-                    .get(`/api/trips/${trip_id}`)
-                    .expect(404, {
-                        error: { message: 'Trip does not exist'}
-                    })
-            })
-            //if I decide to do delete & patch, 404 cases will be the same as ^
+        it(`GET /api/trips responds with 200 and an empty list`, () => {
+            return supertest(app)
+            .get('/api/trips')
+            .expect(200, [])
         })
+        it('GET /api/trips/:trip_id responds with 404', () => {
+            const trip_id = 123
+            return supertest(app)
+                .get(`/api/trips/${trip_id}`)
+                .expect(404, {
+                    error: { message: 'Trip does not exist'}
+                })
+        })
+        it('DELETE /api/trips/:trip_id responds with 404', () => {
+            const trip_id = 123
+            return supertest(app)
+                .delete(`/api/trips/${trip_id}`)
+                .expect(404, {
+                    error: { message: 'Trip does not exist'}
+                })
+        })
+            //if I decide to do a patch, 404 case will be the same as ^
 
         it('POST /api/trips responds with 201 and the new review', () => {
             const newTrip = {
