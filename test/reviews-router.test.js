@@ -64,7 +64,7 @@ describe('reviews-router endpoints', () => {
             //if I decide to do delete & patch, 404 cases will be the same as ^
         })
 
-        it('POST /api/reviews responds with 201 and the new review', () => {
+        it.only('POST /api/reviews responds with 201 and the new review', () => {
             // this.retries(3)
             const newReview = {
                 name: 'Other Mifflin',
@@ -120,7 +120,7 @@ describe('reviews-router endpoints', () => {
                 user_id: 3,
                 image_alt: 'Other Mifflin Paper Company'
             }
-            it.only(`responds with 400 and an error when the '${field}' is missing`, () => {
+            it(`responds with 400 and an error when the '${field}' is missing`, () => {
                 delete reqNewReview[field]
                 return supertest(app)
                     .post('/api/reviews')
