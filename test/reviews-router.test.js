@@ -64,7 +64,7 @@ describe('reviews-router endpoints', () => {
             //if I decide to do delete & patch, 404 cases will be the same as ^
         })
 
-        it.only('POST /api/reviews responds with 201 and the new review', () => {
+        it('POST /api/reviews responds with 201 and the new review', () => {
             // this.retries(3)
             const newReview = {
                 name: 'Other Mifflin',
@@ -107,7 +107,7 @@ describe('reviews-router endpoints', () => {
                 )
             })
 
-            //not working
+        //postman gets correct error thrown, test not working
         const requiredFields = ['name', 'city', 'country', 'rating', 'category', 'comments', 'user_id']
         requiredFields.forEach(field => {
             const reqNewReview = {
@@ -120,14 +120,14 @@ describe('reviews-router endpoints', () => {
                 user_id: 3,
                 image_alt: 'Other Mifflin Paper Company'
             }
-            it(`responds with 400 and an error when the '${field}' is missing`, () => {
+            it.only(`responds with 400 and an error when the '${field}' is missing`, () => {
                 delete reqNewReview[field]
                 return supertest(app)
                     .post('/api/reviews')
                     .send(reqNewReview)
                     .expect(400, {
-                        error: { message: `Missing ${field} in request body`}
-                    })
+                            error: { message: `Missing ${field} in request body`}
+                        })
             })
         })
     })
