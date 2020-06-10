@@ -19,9 +19,9 @@ const TripsService = {
         return db('trips').where({ id }).delete()
     },
 
-    // updateTrip(db, id, newTripInfo) {
-    //     return db('trips').where({ id }).update(newTripInfo)
-    // },
+    updateTrip(db, id, newTripInfo) {
+        return db('trips').where({ id }).update(newTripInfo)
+    },
 }
 
 module.exports = TripsService

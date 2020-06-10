@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe.only('trips-router endpoints', () => {
+describe('trips-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     let testTrips = helpers.makeTestTrips()
@@ -40,6 +40,7 @@ describe.only('trips-router endpoints', () => {
                 .get(`/api/trips/${trip_id}`)
                 .expect(200, expectedTrip)
         })
+
         it('DELETE /api/trips/:trip_id responds with 204 and removes the trip', () => {
             const trip_id = 1
             const expectedTrips = testTrips.filter(trip => trip.id !== trip_id)
@@ -51,6 +52,61 @@ describe.only('trips-router endpoints', () => {
                         .get('/api/trips')
                         .expect(expectedTrips)
                 )
+        })
+
+        it('PATCH /api/trips/:trip_id responds with 204, updates trip', () => {
+            const trip_id = 1
+            const tripToUpdate = {
+                name: 'another new Trip',
+                city: 'test new city',
+                country: 'country of people',
+            }
+            const expectedTrip = {
+                ...testTrips[trip_id - 1],
+                name: 'another new Trip',
+                city: 'test new city',
+                country: 'country of people',
+            }
+            return supertest(app)
+                .patch(`/api/trips/${trip_id}`)
+                .send(tripToUpdate)
+                .expect(204)
+                .then(res =>
+                    supertest(app)
+                        .get(`/api/trips/${trip_id}`)
+                        .expect(expectedTrip)    
+                )
+        })
+        it('PATCH /api/trips/:trip_id responds with 204 when updating a subset of fields', () => {
+            const trip_id = 1
+            const tripToUpdate = {
+                name: 'another new Trip',
+            }
+            const expectedTrip = {
+                ...testTrips[trip_id - 1],
+                ...tripToUpdate
+            }
+            return supertest(app)
+                .patch(`/api/trips/${trip_id}`)
+                .send({
+                    ...tripToUpdate,
+                    randomField: 'should not be in GET'
+                })
+                .expect(204)
+                .then(res =>
+                    supertest(app)
+                        .get(`/api/trips/${trip_id}`)
+                        .expect(expectedTrip)    
+                )
+        })
+        it('PATCH /api/trips/:trip_id responds 400 when no required fields are given', () => {
+            const trip_id = 1
+            return supertest(app)
+                .patch(`/api/trips/${trip_id}`)
+                .send({ wrongField: 'nope'})
+                .expect(400, {
+                    error: { message: 'Request body must contain value to update'}
+                })
         })
     })
 
@@ -77,7 +133,14 @@ describe.only('trips-router endpoints', () => {
                     error: { message: 'Trip does not exist'}
                 })
         })
-            //if I decide to do a patch, 404 case will be the same as ^
+        it('PATCH /api/trips/:trip_id responds with 404', () => {
+            const trip_id = 123
+            return supertest(app)
+                .patch(`/api/trips/${trip_id}`)
+                .expect(404, {
+                    error: { message: 'Trip does not exist'}
+                })
+        })
 
         it('POST /api/trips responds with 201 and the new review', () => {
             const newTrip = {

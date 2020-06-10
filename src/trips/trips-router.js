@@ -84,6 +84,27 @@ tripsRouter
             )
             .catch(next)
     })
+    .patch(jsonParser, (req, res, next) => {
+        const db = req.app.get('db')
+        const id = req.params.trip_id
+
+        const { name, city, country} =  req.body
+        const updatedTrip = { name, city, country }
+
+        const numValues = Object.values(updatedTrip).filter(Boolean).length
+        if (numValues === 0) {
+            return res.status(400).json({
+                error: { message: 'Request body must contain value to update'}
+            })
+        }
+
+        TripsService.updateTrip(db, id, updatedTrip)
+            .then(trip => {
+                res
+                    .status(204).end()
+            })
+            .catch(next)
+    })
 
 
 module.exports = tripsRouter
