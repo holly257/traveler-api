@@ -86,6 +86,34 @@ function makeTestTrips() {
     ]
 }
 
+function makeTestDays() {
+    return [
+        {
+            id: 1,
+            trip_id: 1
+        },
+        {
+            id: 2,
+            trip_id: 2
+        },
+        {
+            id: 3,
+            trip_id: 2
+        },
+        {
+            id: 4,
+            trip_id: 3
+        },
+        {
+            id: 5,
+            trip_id: 1
+        },
+        {
+            id: 6,
+            trip_id: 1
+        }
+    ]
+}
 
 function cleanTables(db) {
     return db.raw(
@@ -161,6 +189,7 @@ module.exports = {
     makeTestUsers,
     makeTestReviews,
     makeTestTrips,
+    makeTestDays,
     
     makeMaliciousReview,
     makeMaliciousTrip,

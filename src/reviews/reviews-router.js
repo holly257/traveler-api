@@ -30,7 +30,6 @@ reviewsRouter
 
         ReviewsService.getAllReviews(db)
             .then(reviews => {
-                console.log(reviews)
                 res.json(reviews.map(sanitizeReviews))
             })
             .catch(next)

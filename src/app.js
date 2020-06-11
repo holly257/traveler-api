@@ -2,11 +2,12 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const { CLIENT_ORIGIN } = require('./config');
+const { CLIENT_ORIGIN } = require('./config')
 const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
 const reviewsRouter = require('./reviews/reviews-router')
 const tripsRouter = require('./trips/trips-router')
+const daysRouter = require('./days/days-router')
 
 const app = express()
 
@@ -20,6 +21,7 @@ app.use(cors({ origin: CLIENT_ORIGIN }))
 
 app.use('/api/reviews', reviewsRouter)
 app.use('/api/trips', tripsRouter)
+app.use('/api/trips', daysRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello Traveler')

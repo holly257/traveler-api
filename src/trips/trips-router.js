@@ -22,7 +22,6 @@ tripsRouter
 
         TripsService.getAllTrips(db)
             .then(trips => {
-                console.log(trips)
                 res.json(trips.map(sanitizeTrips))
             })
             .catch(next)
@@ -49,9 +48,6 @@ tripsRouter
             })
             .catch(next)
     })
-
-    //need tests for post
-
 
 tripsRouter
     .route('/:trip_id')
