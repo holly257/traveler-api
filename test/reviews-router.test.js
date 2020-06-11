@@ -29,7 +29,7 @@ describe('reviews-router endpoints', () => {
         })
 
 
-        it(`GET /api/reviews responds with 200 and all of the reviews`, () => {
+        it.only(`GET /api/reviews responds with 200 and all of the reviews`, () => {
             return supertest(app)
                 .get('/api/reviews')
                 .expect(200, testReviews)

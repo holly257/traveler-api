@@ -8,6 +8,7 @@ const { NODE_ENV } = require('./config')
 const reviewsRouter = require('./reviews/reviews-router')
 const tripsRouter = require('./trips/trips-router')
 const daysRouter = require('./days/days-router')
+const activitiesRouter = require('./activities/activities-router')
 
 const app = express()
 
@@ -22,6 +23,7 @@ app.use(cors({ origin: CLIENT_ORIGIN }))
 app.use('/api/reviews', reviewsRouter)
 app.use('/api/trips', tripsRouter)
 app.use('/api/trips', daysRouter)
+app.use('/api/trips', activitiesRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello Traveler')

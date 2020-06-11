@@ -115,6 +115,117 @@ function makeTestDays() {
     ]
 }
 
+
+function makeTestActivities() {
+    return [
+        {
+            "id": 1,
+            "activity": "wake up",
+            "meridiem": "am",
+            "start_time": 8,
+            "day_id": 1
+        },
+        {
+            "id": 2,
+            "activity": "breakfast at cafe",
+            "meridiem": "am",
+            "start_time": 9,
+            "day_id": 1
+        },
+        {
+            "id": 3,
+            "activity": "get up",
+            "meridiem": "am",
+            "start_time": 10,
+            "day_id": 2
+        },
+        {
+            "id": 4,
+            "activity": "breakfast at restaurant",
+            "meridiem": "am",
+            "start_time": 11,
+            "day_id": 2
+        },
+        {
+            "id": 5,
+            "activity": "wake up",
+            "meridiem": "am",
+            "start_time": 9,
+            "day_id": 3
+        },
+        {
+            "id": 6,
+            "activity": "breakfast on beach",
+            "meridiem": "am",
+            "start_time": 11,
+            "day_id": 3
+        },
+        {
+            "id": 7,
+            "activity": "lunch with friend",
+            "meridiem": "pm",
+            "start_time": 2,
+            "day_id": 3
+        },
+        {
+            "id": 8,
+            "activity": "breakfast",
+            "meridiem": "am",
+            "start_time": 10,
+            "day_id": 4
+        },
+        {
+            "id": 9,
+            "activity": "beach time",
+            "meridiem": "pm",
+            "start_time": 1,
+            "day_id": 4
+        },
+        {
+            "id": 10,
+            "activity": "cafe with friend",
+            "meridiem": "pm",
+            "start_time": 3,
+            "day_id": 4
+        },
+        {
+            "id": 11,
+            "activity": "wake up",
+            "meridiem": "am",
+            "start_time": 10,
+            "day_id": 5
+        },
+        {
+            "id": 12,
+            "activity": "tour of Stari Most",
+            "meridiem": "pm",
+            "start_time": 2,
+            "day_id": 5
+        },
+        {
+            "id": 13,
+            "activity": "breakfast and coffee",
+            "meridiem": "am",
+            "start_time": 11,
+            "day_id": 6
+        },
+        {
+            "id": 14,
+            "activity": "morning walk",
+            "meridiem": "am",
+            "start_time": 7,
+            "day_id": 1
+        },
+        {
+            "id": 15,
+            "activity": "breakfast at cafe",
+            "meridiem": "am",
+            "start_time": 8,
+            "day_id": 6
+        }
+    ]
+}
+
 function cleanTables(db) {
     return db.raw(
       `TRUNCATE
@@ -190,6 +301,7 @@ module.exports = {
     makeTestReviews,
     makeTestTrips,
     makeTestDays,
+    makeTestActivities,
     
     makeMaliciousReview,
     makeMaliciousTrip,

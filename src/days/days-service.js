@@ -12,7 +12,7 @@ const DaysService = {
     // },
 
     // getById(db, id) {
-    //     return db.from('days').select('*')
+    //     return db.from('activities').select('*')
     //         .where('id', id).first()
     // },
 
