@@ -68,7 +68,8 @@ tripsRouter
             .catch(next)
     })
     .get((req, res, next) => {
-        res.json(sanitizeTrips(res.trip))
+        // res.json(sanitizeTrips(res.trip))
+        res.json(res.trip)
     })
     .delete((req, res, next) => {
         const db = req.app.get('db')

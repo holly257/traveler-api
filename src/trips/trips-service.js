@@ -12,7 +12,11 @@ const TripsService = {
 
     getById(db, id) {
         return db.from('trips').select('*')
-            .where('id', id).first()
+            .where('trips.id', id)
+            .leftJoin('days', 'trips.id', 'days.trip_id')
+            .leftJoin('activities', 'days.id', 'day_id')
+        // return db.from('trips').select('*')
+        //     .where('id', id).first()
     },
 
     deleteTrip(db, id) {
