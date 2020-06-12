@@ -55,7 +55,7 @@ tripsRouter
         const db = req.app.get('db')
         const id = req.params.trip_id
 
-        TripsService.getById(db, id)
+        TripsService.getWholeTripById(db, id)
             .then(trip => {
                 if(!trip) {
                     return res.status(404).json({
@@ -68,7 +68,6 @@ tripsRouter
             .catch(next)
     })
     .get((req, res, next) => {
-        // res.json(sanitizeTrips(res.trip))
         res.json(res.trip)
     })
     .delete((req, res, next) => {
