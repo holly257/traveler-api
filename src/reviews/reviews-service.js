@@ -14,6 +14,10 @@ const ReviewsService = {
         return db.from('reviews').select('*')
             .where('id', id).first()
     },
+
+    deleteReview(db, id) {
+        return db('reviews').where({ id }).delete()
+    },
 }
 
 module.exports = ReviewsService

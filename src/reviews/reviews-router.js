@@ -36,9 +36,10 @@ reviewsRouter
     })
     .post(jsonParser, (req, res, next) => {
         const db = req.app.get('db')
+        console.log(req.body)
         const { name, image, image_alt, city, country, address, rating, category, comments, user_id } =  req.body
         const newReview = { name, image, image_alt, city, country, address, rating, category, comments, user_id }
-
+        
         const required = { name, city, country, rating, category, comments, user_id }
 
             for(const [key, value] of Object.entries(required)) {
@@ -80,6 +81,16 @@ reviewsRouter
     })
     .get((req, res, next) => {
         res.json(sanitizeReviews(res.review))
-})
+    })
+    .delete((req, res, next) => {
+        const db = req.app.get('db')
+        const id = req.params.review_id
+
+        ReviewsService.deleteReview(db, id)
+            .then(review =>
+                res.status(204).end()
+            )
+            .catch(next)
+    })
 
 module.exports = reviewsRouter

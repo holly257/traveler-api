@@ -29,7 +29,7 @@ describe('reviews-router endpoints', () => {
         })
 
 
-        it.only(`GET /api/reviews responds with 200 and all of the reviews`, () => {
+        it(`GET /api/reviews responds with 200 and all of the reviews`, () => {
             return supertest(app)
                 .get('/api/reviews')
                 .expect(200, testReviews)
@@ -41,7 +41,18 @@ describe('reviews-router endpoints', () => {
                 .get(`/api/reviews/${review_id}`)
                 .expect(200, expectedReview)
         })
-           
+        it('DELETE /api/reviews/:review_id responds with 204 and removes the review', () => {
+            const review_id = 1
+            const expectedReview = testReviews.filter(review => review.id !== review_id)
+            return supertest(app)
+                .delete(`/api/reviews/${review_id}`)
+                .expect(204)
+                .then(res => 
+                    supertest(app)
+                        .get('/api/reviews')
+                        .expect(expectedReview)
+                )
+        })
         
     })
 
@@ -61,7 +72,14 @@ describe('reviews-router endpoints', () => {
                         error: { message: 'Review does not exist'}
                     })
             })
-            //if I decide to do delete & patch, 404 cases will be the same as ^
+            it('DELETE /api/reviews/:review_id responds with 404', () => {
+                const review_id = 123
+                return supertest(app)
+                    .delete(`/api/reviews/${review_id}`)
+                    .expect(404, {
+                        error: { message: 'Review does not exist'}
+                    })
+            })
         })
 
         it('POST /api/reviews responds with 201 and the new review', () => {
