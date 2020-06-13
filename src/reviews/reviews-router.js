@@ -27,7 +27,6 @@ reviewsRouter
     .get((req, res, next) => {
         const db = req.app.get('db')
 
-        console.log(req)
         ReviewsService.getAllReviews(db)
             .then(reviews => {
                 res.json(reviews.map(sanitizeReviews))

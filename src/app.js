@@ -6,9 +6,11 @@ const { CLIENT_ORIGIN } = require('./config')
 const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
 const reviewsRouter = require('./reviews/reviews-router')
+const searchRouter = require('./search/search-router')
 const tripsRouter = require('./trips/trips-router')
 const daysRouter = require('./days/days-router')
 const activitiesRouter = require('./activities/activities-router')
+const usersRouter = require('./users/users-router')
 
 const app = express()
 
@@ -23,6 +25,8 @@ app.use(cors())
 
 //only reviews router is protected right now
 //maybe have search router, unprotected, only does review get request
+app.use('/api/users', usersRouter)
+app.use('/api/search', searchRouter)
 app.use('/api/reviews', reviewsRouter)
 app.use('/api/trips', tripsRouter)
 app.use('/api/trips', daysRouter)

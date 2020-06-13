@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe.only('reviews-router endpoints', () => {
+describe('reviews-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     let testReviews = helpers.makeTestReviews()
