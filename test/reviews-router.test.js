@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe('reviews-router endpoints', () => {
+describe.only('reviews-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     let testReviews = helpers.makeTestReviews()
@@ -23,8 +23,59 @@ describe('reviews-router endpoints', () => {
         return db.into('users').insert(testUsers)
     })
 
+    describe('Protected endpoints', () => {
+        beforeEach('insert reviews', () => {
+            return db.into('reviews').insert(testReviews)
+        })
+
+        const protectedEndpoints = [
+            {
+                name: 'GET /api/reviews/:review_id',
+                path: '/api/reviews/1'
+            },
+        ]
+
+        protectedEndpoints.forEach(endpoint => {
+            it(`${endpoint.name} responds with 401 'Missing basic token' when no baisc token`, () => {
+                return supertest(app)
+                    .get(endpoint.path)
+                    .expect(401, {
+                        error: 'Missing basic token'
+                    })
+            })
+            it(`${endpoint.name} responds 401 'Unauthorized request' when no credentials in token`, () => {
+                const noCreds = { username: '', password: ''}
+                return supertest(app)
+                    .get(endpoint.path)
+                    .set('Authorization', helpers.makeAuthHeader(noCreds))
+                    .expect(401, {
+                        error: 'Unauthorized Request'
+                    })
+            })
+            it(`${endpoint.name} responds 401 'Unauthorized request' when invalid user`, () => {
+                const invalidCreds = { username: 'nope', password: 'good'}
+                return supertest(app)
+                    .get(endpoint.path)
+                    .set('Authorization', helpers.makeAuthHeader(invalidCreds))
+                    .expect(401, {
+                        error: 'Unauthorized Request'
+                    })
+            })
+            it(`${endpoint.name} responds 401 'Unauthorized request' when invalid password`, () => {
+                const invalidCreds = { username: testUsers[0].username, password: 'not so good'}
+                return supertest(app)
+                    .get(endpoint.path)
+                    .set('Authorization', helpers.makeAuthHeader(invalidCreds))
+                    .expect(401, {
+                        error: 'Unauthorized Request'
+                    })
+            })
+        })
+    })
+
+
     context('Given there are reviews in the database', () => {
-        beforeEach('insert notes', () => {
+        beforeEach('insert reviews', () => {
             return db.into('reviews').insert(testReviews)
         })
 
@@ -39,13 +90,16 @@ describe('reviews-router endpoints', () => {
             const expectedReview = testReviews[review_id - 1]
             return supertest(app)
                 .get(`/api/reviews/${review_id}`)
+                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .expect(200, expectedReview)
         })
+
         it('DELETE /api/reviews/:review_id responds with 204 and removes the review', () => {
-            const review_id = 1
+            const review_id = 2
             const expectedReview = testReviews.filter(review => review.id !== review_id)
             return supertest(app)
                 .delete(`/api/reviews/${review_id}`)
+                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .expect(204)
                 .then(res => 
                     supertest(app)
@@ -53,10 +107,9 @@ describe('reviews-router endpoints', () => {
                         .expect(expectedReview)
                 )
         })
-        
     })
-
     
+
     context('Given no reviews in the database', () => {
         describe('GET /api/reviews', () => {
             it(`responds with 200 and an empty list`, () => {
@@ -68,6 +121,7 @@ describe('reviews-router endpoints', () => {
                 const review_id = 123
                 return supertest(app)
                     .get(`/api/reviews/${review_id}`)
+                    .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                     .expect(404, {
                         error: { message: 'Review does not exist'}
                     })
@@ -76,6 +130,7 @@ describe('reviews-router endpoints', () => {
                 const review_id = 123
                 return supertest(app)
                     .delete(`/api/reviews/${review_id}`)
+                    .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                     .expect(404, {
                         error: { message: 'Review does not exist'}
                     })
@@ -98,6 +153,7 @@ describe('reviews-router endpoints', () => {
             }
             return supertest(app)
                 .post('/api/reviews')
+                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .send(newReview)
                 .expect(201)
                 .expect(res => {
@@ -120,6 +176,7 @@ describe('reviews-router endpoints', () => {
                 .then(postRes =>
                     supertest(app)
                         .get(`/api/reviews/${postRes.body.id}`)
+                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                         .expect(postRes.body)    
                 )
             })
@@ -140,6 +197,7 @@ describe('reviews-router endpoints', () => {
                 delete reqNewReview[field]
                 return supertest(app)
                     .post('/api/reviews')
+                    .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                     .send(reqNewReview)
                     .expect(400, {
                             error: { message: `Missing ${field} in request body`}
@@ -147,6 +205,7 @@ describe('reviews-router endpoints', () => {
             })
         })
     })
+
 
     context('Given an xss attack', () => {
         const testUser = helpers.makeTestUsers()[1]
@@ -176,6 +235,7 @@ describe('reviews-router endpoints', () => {
             const review_id = 911
             return supertest(app)
                 .get(`/api/reviews/${review_id}`)
+                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .expect(200)
                 .expect(res => {
                     expect(res.body.name).to.eql(expectedReview.name)
@@ -189,6 +249,7 @@ describe('reviews-router endpoints', () => {
         it(`POST /api/reviews removes xss content`, () => {
             return supertest(app)
                 .post(`/api/reviews`)
+                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .send(maliciousReview)
                 .expect(201)
                 .expect(res => {

@@ -293,6 +293,11 @@ function makeMaliciousTrip(trip) {
       expectedTrip,
     }
 }
+
+function makeAuthHeader(user){
+    const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
+    return `Basic ${token}`
+}
 //   regex for url sanitizing 
 //if no image_alt, name.value + ' image'
 
@@ -307,4 +312,5 @@ module.exports = {
     makeMaliciousTrip,
 
     cleanTables,
+    makeAuthHeader,
 }

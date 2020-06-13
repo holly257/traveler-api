@@ -21,6 +21,8 @@ app.use(helmet())
 app.use(cors())
 // app.use(cors({ origin: CLIENT_ORIGIN }))
 
+//only reviews router is protected right now
+//maybe have search router, unprotected, only does review get request
 app.use('/api/reviews', reviewsRouter)
 app.use('/api/trips', tripsRouter)
 app.use('/api/trips', daysRouter)

@@ -5,12 +5,11 @@ const xss = require('xss')
 const path = require('path')
 const jsonParser = express.json()
 const ReviewsService = require('./reviews-service')
+const { requireAuth } = require('../middleware/basic-auth')
 
 const sanitizeReviews = review => ({
     id: review.id,
     name: xss(review.name),
-    //will that work on image url?
-    //not testing with xss in image - not sure how
     image: xss(review.image), 
     image_alt: xss(review.image_alt), 
     city: xss(review.city), 
@@ -28,17 +27,19 @@ reviewsRouter
     .get((req, res, next) => {
         const db = req.app.get('db')
 
+        console.log(req)
         ReviewsService.getAllReviews(db)
             .then(reviews => {
                 res.json(reviews.map(sanitizeReviews))
             })
             .catch(next)
     })
-    .post(jsonParser, (req, res, next) => {
+    .post(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         console.log(req.body)
         const { name, image, image_alt, city, country, address, rating, category, comments, user_id } =  req.body
         const newReview = { name, image, image_alt, city, country, address, rating, category, comments, user_id }
+        
         
         const required = { name, city, country, rating, category, comments, user_id }
 
@@ -49,7 +50,7 @@ reviewsRouter
                     })
                 }
             }
-
+        // console.log(req.user.id)
         ReviewsService.insertReview(db, newReview)
             .then(review => {
                 res
@@ -63,6 +64,7 @@ reviewsRouter
 
 reviewsRouter
     .route('/:review_id')
+    .all(requireAuth)
     .all((req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.review_id
