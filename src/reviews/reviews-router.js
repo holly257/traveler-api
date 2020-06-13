@@ -24,7 +24,7 @@ const sanitizeReviews = review => ({
 
 reviewsRouter
     .route('/')
-    .get((req, res, next) => {
+    .get(requireAuth, (req, res, next) => {
         const db = req.app.get('db')
 
         ReviewsService.getAllReviews(db)

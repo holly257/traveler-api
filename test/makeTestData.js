@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs')
+
 function makeTestUsers() {
     return [
         {
@@ -227,12 +229,70 @@ function makeTestActivities() {
 }
 
 function cleanTables(db) {
-    return db.raw(
-      `TRUNCATE
-        users,
-        reviews
-        RESTART IDENTITY CASCADE`
-    )
+    return db.transaction(trx =>
+        trx.raw(
+            `TRUNCATE
+                reviews,
+                activities,
+                days,
+                trips,
+                users
+              RESTART IDENTITY CASCADE`
+          )
+        .then(() =>
+          Promise.all([
+            trx.raw(`ALTER SEQUENCE reviews_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`ALTER SEQUENCE activities_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`ALTER SEQUENCE days_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`ALTER SEQUENCE trips_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`SELECT setval('reviews_id_seq', 0)`),
+            trx.raw(`SELECT setval('activities_id_seq', 0)`),
+            trx.raw(`SELECT setval('days_id_seq', 0)`),
+            trx.raw(`SELECT setval('trips_id_seq', 0)`),
+            trx.raw(`SELECT setval('users_id_seq', 0)`),
+          ])
+        )
+      )
+}
+
+function cleanTablesNotUsers(db) {
+    return db.transaction(trx =>
+        trx.raw(
+            `TRUNCATE
+                reviews,
+                activities,
+                days,
+                trips
+              RESTART IDENTITY CASCADE`
+          )
+        .then(() =>
+          Promise.all([
+            trx.raw(`ALTER SEQUENCE reviews_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`ALTER SEQUENCE activities_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`ALTER SEQUENCE days_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`ALTER SEQUENCE trips_id_seq minvalue 0 START WITH 1`),
+            trx.raw(`SELECT setval('reviews_id_seq', 0)`),
+            trx.raw(`SELECT setval('activities_id_seq', 0)`),
+            trx.raw(`SELECT setval('days_id_seq', 0)`),
+            trx.raw(`SELECT setval('trips_id_seq', 0)`),
+          ])
+        )
+      )
+}
+
+function seedUsers(db, users) {
+    const preppedUsers = users.map(user => ({
+      ...user,
+      password: bcrypt.hashSync(user.password, 10)
+    }))
+    return db.into('users').insert(preppedUsers)
+      .then(() =>
+        db.raw(
+          `SELECT setval('users_id_seq', ?)`,
+          [users[users.length - 1].id],
+        )
+      )
 }
 
 function makeMaliciousReview(review) {
@@ -312,5 +372,7 @@ module.exports = {
     makeMaliciousTrip,
 
     cleanTables,
+    cleanTablesNotUsers,
     makeAuthHeader,
+    seedUsers,
 }

@@ -3,6 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
+
 describe('reviews-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
@@ -17,11 +18,12 @@ describe('reviews-router endpoints', () => {
     })
 
     after('disconnect from db', () => db.destroy(db))
-    beforeEach('clean the table', () => helpers.cleanTables((db)))
+    beforeEach('clean the table', () => helpers.cleanTablesNotUsers((db)))
 
-    beforeEach('insert users', () => {
-        return db.into('users').insert(testUsers)
-    })
+    // beforeEach('insert users', () => {
+    //     helpers.seedUsers(db, testUsers)
+    //     // return db.into('users').insert(testUsers)
+    // })
 
     describe('Protected endpoints', () => {
         beforeEach('insert reviews', () => {
@@ -32,6 +34,10 @@ describe('reviews-router endpoints', () => {
             {
                 name: 'GET /api/reviews/:review_id',
                 path: '/api/reviews/1'
+            },
+            {
+                name: 'GET /api/reviews',
+                path: '/api/reviews'
             },
         ]
 
@@ -83,6 +89,7 @@ describe('reviews-router endpoints', () => {
         it(`GET /api/reviews responds with 200 and all of the reviews`, () => {
             return supertest(app)
                 .get('/api/reviews')
+                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .expect(200, testReviews)
         })
         it('GET /api/reviews/:review_id responds with 200 and requested review', () => {
@@ -104,6 +111,7 @@ describe('reviews-router endpoints', () => {
                 .then(res => 
                     supertest(app)
                         .get('/api/reviews')
+                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                         .expect(expectedReview)
                 )
         })
@@ -112,9 +120,20 @@ describe('reviews-router endpoints', () => {
 
     context('Given no reviews in the database', () => {
         describe('GET /api/reviews', () => {
+            
+            it('DELETE /api/reviews/:review_id responds with 404', () => {
+                const review_id = 123
+                return supertest(app)
+                    .delete(`/api/reviews/${review_id}`)
+                    .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                    .expect(404, {
+                        error: { message: 'Review does not exist'}
+                    })
+            })
             it(`responds with 200 and an empty list`, () => {
                 return supertest(app)
                 .get('/api/reviews')
+                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .expect(200, [])
             })
             it('GET /api/reviews/:review_id responds with 404', () => {
@@ -126,15 +145,8 @@ describe('reviews-router endpoints', () => {
                         error: { message: 'Review does not exist'}
                     })
             })
-            it('DELETE /api/reviews/:review_id responds with 404', () => {
-                const review_id = 123
-                return supertest(app)
-                    .delete(`/api/reviews/${review_id}`)
-                    .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                    .expect(404, {
-                        error: { message: 'Review does not exist'}
-                    })
-            })
+
+            
         })
 
         it('POST /api/reviews responds with 201 and the new review', () => {
@@ -221,6 +233,7 @@ describe('reviews-router endpoints', () => {
         it(`GET /api/reviews removes xss content`, () => {
             return supertest(app)
                 .get('/api/reviews')
+                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .expect(200)
                 .expect(res => {
                     expect(res.body[0].name).to.eql(expectedReview.name)
