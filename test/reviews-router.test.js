@@ -3,7 +3,6 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-
 describe('reviews-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
@@ -24,61 +23,6 @@ describe('reviews-router endpoints', () => {
     //     helpers.seedUsers(db, testUsers)
     //     // return db.into('users').insert(testUsers)
     // })
-
-    describe('Protected endpoints', () => {
-        beforeEach('insert reviews', () => {
-            return db.into('reviews').insert(testReviews)
-        })
-
-        const protectedEndpoints = [
-            {
-                name: 'GET /api/reviews/:review_id',
-                path: '/api/reviews/1'
-            },
-            {
-                name: 'GET /api/reviews',
-                path: '/api/reviews'
-            },
-        ]
-
-        protectedEndpoints.forEach(endpoint => {
-            it(`${endpoint.name} responds with 401 'Missing basic token' when no baisc token`, () => {
-                return supertest(app)
-                    .get(endpoint.path)
-                    .expect(401, {
-                        error: 'Missing basic token'
-                    })
-            })
-            it(`${endpoint.name} responds 401 'Unauthorized request' when no credentials in token`, () => {
-                const noCreds = { username: '', password: ''}
-                return supertest(app)
-                    .get(endpoint.path)
-                    .set('Authorization', helpers.makeAuthHeader(noCreds))
-                    .expect(401, {
-                        error: 'Unauthorized Request'
-                    })
-            })
-            it(`${endpoint.name} responds 401 'Unauthorized request' when invalid user`, () => {
-                const invalidCreds = { username: 'nope', password: 'good'}
-                return supertest(app)
-                    .get(endpoint.path)
-                    .set('Authorization', helpers.makeAuthHeader(invalidCreds))
-                    .expect(401, {
-                        error: 'Unauthorized Request'
-                    })
-            })
-            it(`${endpoint.name} responds 401 'Unauthorized request' when invalid password`, () => {
-                const invalidCreds = { username: testUsers[0].username, password: 'not so good'}
-                return supertest(app)
-                    .get(endpoint.path)
-                    .set('Authorization', helpers.makeAuthHeader(invalidCreds))
-                    .expect(401, {
-                        error: 'Unauthorized Request'
-                    })
-            })
-        })
-    })
-
 
     context('Given there are reviews in the database', () => {
         beforeEach('insert reviews', () => {

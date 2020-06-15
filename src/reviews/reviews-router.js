@@ -5,7 +5,7 @@ const xss = require('xss')
 const path = require('path')
 const jsonParser = express.json()
 const ReviewsService = require('./reviews-service')
-const { requireAuth } = require('../middleware/basic-auth')
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const sanitizeReviews = review => ({
     id: review.id,

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe.only('auth endpoints', () => {
+describe('auth endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     
@@ -70,7 +70,7 @@ describe.only('auth endpoints', () => {
 
 
         //sometimes the signature portion doesn't match, and it fails
-        it.only('responds 200 and JWT auth token using secret when valid credentials', () => {
+        it('responds 200 and JWT auth token using secret when valid credentials', () => {
             const userValidCreds = {
                 username: testUsers[0].username,
                 password: testUsers[0].password
