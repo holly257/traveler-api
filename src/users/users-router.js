@@ -7,21 +7,22 @@ const jsonParser = express.json()
 const UsersService = require('./users-service')
 
 const sanitizeUsers = user => ({
-    username: xss(user.username),
-    password: xss(user.password), 
+    id: user.id,
+    username: xss(user.username), 
     email: xss(user.email), 
-    fullname: xss(user.fullname)
+    fullname: xss(user.fullname),
+    date_created: user.date_created
 })
 
-//work in progress - need tests 
 usersRouter
     .route('/')
     .post(jsonParser, (req, res, next) => {
         const db = req.app.get('db')
-        const { fullname, password, username, email } =  req.body
-        const newUser = { fullname, password, username, email }
+        const { fullname, username, email, password } =  req.body
 
-        for(const [key, value] of Object.entries(newUser)) {
+        const requiredUser = { fullname, password, username, email }
+
+        for(const [key, value] of Object.entries(requiredUser)) {
             if (value ==  null) {
                 return res.status(400).json({
                     error: { message: `Missing ${key} in request body`}
@@ -29,12 +30,40 @@ usersRouter
             }
         }
 
-        UsersService.insertUser(db, newUser)
-            .then(user => {
-                res
-                    .status(201)
-                    .location(path.posix.join(req.originalUrl, `/${user.id}`))
-                    .json(sanitizeUsers(user))
+        const passwordError = UsersService.validatePassword(password)
+        if(passwordError)
+            return res.status(400).json({ error: passwordError })
+        
+        if(!email.includes('@'))
+        return res.status(400).json({
+            error: { message: `Email must contain '@' symbol`}
+        })
+
+        UsersService.hasUserWithUsername(
+            req.app.get('db'),
+            username
+        )
+            .then(hasUserWithUsername => {
+                if(hasUserWithUsername)
+                    return res.status(400).json({ error: 'Username already taken'})
+
+                    return UsersService.hashPassword(password)
+                        .then(hashedPassword => {
+                            const newUser = { 
+                                fullname, 
+                                password: hashedPassword, 
+                                username, 
+                                email 
+                            }
+
+                            return UsersService.insertUser(db, newUser)
+                                .then(user => {
+                                    res
+                                        .status(201)
+                                        .location(path.posix.join(req.originalUrl, `/${user.id}`))
+                                        .json(sanitizeUsers(user))
+                                })
+                        })
             })
             .catch(next)
     })

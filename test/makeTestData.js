@@ -355,6 +355,28 @@ function makeMaliciousTrip(trip) {
     }
 }
 
+function makeMaliciousUser() {
+    const maliciousUser = {
+        
+        username: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+        fullname: 'Naughty naughty very naughty <script>alert("xss");</script>', 
+        password: '11AAaabb!!Naughty naughty very naughty <script>alert("xss");</script>', 
+        email: '@Naughty naughty very naughty <script>alert("xss");</script>',
+        
+    }
+    const expectedUser = {
+        
+        username: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
+        fullname: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
+        password: '11AAaabb!!Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
+        email: '@Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
+    }
+    return {
+      maliciousUser,
+      expectedUser,
+    }
+}
+
 function makeAuthHeader(user, secret = process.env.JWT_SECRET){
     const token = jwt.sign({user_id: user.id}, secret, {
         subject: user.username,
@@ -362,8 +384,6 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET){
     })
     return `Bearer ${token}`
 }
-//   regex for url sanitizing 
-//if no image_alt, name.value + ' image'
 
 module.exports = {
     makeTestUsers,
@@ -374,6 +394,7 @@ module.exports = {
     
     makeMaliciousReview,
     makeMaliciousTrip,
+    makeMaliciousUser,
 
     cleanTables,
     cleanTablesNotUsers,
