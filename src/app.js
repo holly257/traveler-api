@@ -33,6 +33,7 @@ app.use('/api/auth', authRouter)
 
 app.use('/api/users', usersRouter)
 app.use('/api/trips', tripsRouter)
+
 app.use('/api/trips', daysRouter)
 app.use('/api/trips', activitiesRouter)
 
