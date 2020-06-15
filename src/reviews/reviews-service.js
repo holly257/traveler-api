@@ -3,6 +3,11 @@ const ReviewsService = {
         return db.select('*').from('reviews')
     },
 
+    getAllReviewsForUser(db, user_id) {
+        return db.from('reviews').select('*')
+            .where('user_id', user_id)
+    },
+
     insertReview(db, newReview) {
         return db.insert(newReview).into('reviews')
             .returning('*').then(rows => {

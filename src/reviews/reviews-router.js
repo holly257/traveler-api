@@ -26,8 +26,9 @@ reviewsRouter
     .route('/')
     .get(requireAuth, (req, res, next) => {
         const db = req.app.get('db')
+        const user_id = req.user.id
 
-        ReviewsService.getAllReviews(db)
+        ReviewsService.getAllReviewsForUser(db, user_id)
             .then(reviews => {
                 res.json(reviews.map(sanitizeReviews))
             })
@@ -35,7 +36,6 @@ reviewsRouter
     })
     .post(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
-        // console.log(req.body)
         const { name, image, image_alt, city, country, address, rating, category, comments, user_id } =  req.body
         const newReview = { name, image, image_alt, city, country, address, rating, category, comments, user_id }
         
@@ -49,7 +49,6 @@ reviewsRouter
                     })
                 }
             }
-        // console.log(req.user.id)
         ReviewsService.insertReview(db, newReview)
             .then(review => {
                 res
