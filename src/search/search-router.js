@@ -38,24 +38,42 @@ searchRouter
     .get((req, res, next) => {
         const db = req.app.get('db')
         const { city, category } = req.query
-        let searchReq = { }
 
         if(!city){
             return res.status(400).json({ error: {message: 'City name must be included'}})
         }
 
         if(!category){
-            searchReq = { city }
-            console.log(searchReq.city)
+            let search = { city }
+            let searchReq = search.city
             SearchReviewsService.getBySearchTerm(db, searchReq)
                 .then(reviews => {
-                    console.log(reviews)
-                    // res.json(reviews.map(sanitizeReviews))
+                    if(!reviews.length) {
+                        return res.status(404).json({ 
+                            error: { message: 'City has not been reviewed yet' }
+                        })
+                    }
+                    res.json(reviews.map(sanitizeReviews))
                 })
                 .catch(next)
 
         } else {
-            searchReq = { city, category }
+            req_city = { city }
+            req_cat = { category }
+            
+            search_city = req_city.city
+            search_cat = req_cat.category
+            
+            SearchReviewsService.getBySearchTermAndCategory(db, search_city, search_cat)
+                .then(reviews => {
+                    if(!reviews.length) {
+                        return res.status(404).json({ 
+                            error: { message: 'City with category has not been reviewed yet' }
+                        })
+                    }
+                    res.json(reviews.map(sanitizeReviews))
+                })
+                .catch(next)
         }
         
     })

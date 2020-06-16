@@ -5,13 +5,13 @@ const SearchReviewsService = {
 
     getBySearchTerm(db, searchTerm) {
         return db.select('*').from('reviews')
-            // .where('city', 'like', `%Mostar%`)
             .where('city', 'like', `%${searchTerm}%`)
     },
 
-    getBySearchTermAndCategory(db, searchTerm, category) {
-        // return db.from('reviews').select('*')
-        //     .where('id', id).first()
+    getBySearchTermAndCategory(db, searchTerm, searchCat) {
+        return db.select('*').from('reviews')
+            .where('city', 'like', `%${searchTerm}%`)
+            .where('category', searchCat)
     },
 
 }
