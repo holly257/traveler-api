@@ -1,15 +1,15 @@
 const DaysService = {
-    getAllDays(db, trip_id) {
-        return db.select('*').from('days')
-            .where('trip_id', trip_id)
-    },
-
-    // insertDay(db, newDay) {
-    //     return db.insert(newDay).into('days')
-    //         .returning('*').then(rows => {
-    //             return rows[0]
-    //         })
+    // getAllDays(db, trip_id) {
+    //     return db.select('*').from('days')
+    //         .where('trip_id', trip_id)
     // },
+
+    insertDay(db, id) {
+        return db.insert({'trip_id': id}).into('days')
+            .returning('*').then(rows => {
+                return rows[0]
+            })
+    },
 
     // getById(db, id) {
     //     return db.from('activities').select('*')
