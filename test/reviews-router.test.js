@@ -29,12 +29,12 @@ describe('reviews-router endpoints', () => {
             return db.into('reviews').insert(testReviews)
         })
 
-
-        it(`GET /api/reviews responds with 200 and all of the reviews`, () => {
+        it.only(`GET /api/reviews responds with 200 and all of the reviews for that user`, () => {
+            const expectedReviews = testReviews.filter(review => review.user_id == testUsers[0].id)
             return supertest(app)
                 .get('/api/reviews')
                 .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                .expect(200, testReviews)
+                .expect(200, expectedReviews)
         })
         it('GET /api/reviews/:review_id responds with 200 and requested review', () => {
             const review_id = 1

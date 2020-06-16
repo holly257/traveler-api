@@ -16,6 +16,11 @@ const TripsService = {
         //     })
     },
 
+    getAllTripsForUser(db, user_id) {
+        return db.select('*').from('trips')
+            .where('user_id', user_id)
+    },
+
     insertTrip(db, newTrip) {
         return db.insert(newTrip).into('trips')
             .returning('*').then(rows => {

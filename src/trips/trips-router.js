@@ -4,6 +4,7 @@ const tripsRouter = express.Router()
 const xss = require('xss')
 const path = require('path')
 const jsonParser = express.json()
+const { requireAuth } = require('../middleware/jwt-auth')
 const TripsService = require('./trips-service')
 
 const sanitizeTrips = trip => ({
@@ -17,16 +18,17 @@ const sanitizeTrips = trip => ({
 
 tripsRouter
     .route('/')
-    .get((req, res, next) => {
+    .get(requireAuth, (req, res, next) => {
         const db = req.app.get('db')
+        const user_id = req.user.id
 
-        TripsService.getAllTrips(db)
+        TripsService.getAllTripsForUser(db, user_id)
             .then(trips => {
                 res.json(trips.map(sanitizeTrips))
             })
             .catch(next)
     })
-    .post(jsonParser, (req, res, next) => {
+    .post(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const { name, city, country, user_id } =  req.body
         const newTrip = { name, city, country, user_id }
@@ -51,7 +53,7 @@ tripsRouter
 
 tripsRouter
     .route('/:trip_id')
-    .all((req, res, next) => {
+    .all(requireAuth, (req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.trip_id
 
@@ -93,9 +95,14 @@ tripsRouter
                 error: { message: 'Request body must contain value to update'}
             })
         }
-
         TripsService.updateTrip(db, id, updatedTrip)
             .then(trip => {
+                if(!trip) {
+                    
+                    return res.status(404).json({
+                        error: { message: 'Trip does not exist'}
+                    })
+                }
                 res
                     .status(204).end()
             })
