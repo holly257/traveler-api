@@ -32,5 +32,32 @@ searchRouter
             })
             .catch(next)
     })
+
+searchRouter
+    .route('/term')
+    .get((req, res, next) => {
+        const db = req.app.get('db')
+        const { city, category } = req.query
+        let searchReq = { }
+
+        if(!city){
+            return res.status(400).json({ error: {message: 'City name must be included'}})
+        }
+
+        if(!category){
+            searchReq = { city }
+            console.log(searchReq.city)
+            SearchReviewsService.getBySearchTerm(db, searchReq)
+                .then(reviews => {
+                    console.log(reviews)
+                    // res.json(reviews.map(sanitizeReviews))
+                })
+                .catch(next)
+
+        } else {
+            searchReq = { city, category }
+        }
+        
+    })
     
 module.exports = searchRouter

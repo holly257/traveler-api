@@ -36,9 +36,9 @@ reviewsRouter
     })
     .post(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
-        const { name, image, image_alt, city, country, address, rating, category, comments, user_id } =  req.body
-        const newReview = { name, image, image_alt, city, country, address, rating, category, comments, user_id }
-        
+        const { name, image, image_alt, city, country, address, rating, category, comments } =  req.body
+        const user_id = req.user.id
+        const newReview = { name, image, image_alt, city, country, address, rating, category, comments, user_id }   
         
         const required = { name, city, country, rating, category, comments, user_id }
 
