@@ -29,7 +29,7 @@ daysRouter
                     })
                 }
                 res
-                    .status(201).end()
+                    .status(201).json(days)
             })
             .catch(next)
     })
