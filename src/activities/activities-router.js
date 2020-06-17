@@ -58,11 +58,10 @@ activitiesRouter
 activitiesRouter
     .route('/:activity_id')
     // .route('/:trip_id/days/:day_id/activities/:activity_id')
-    .all(requireAuth, (req, res, next) => {
+    .all(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const activity_id = req.params.activity_id
-        const day_id = req.params.day_id
-        console.log(day_id, activity_id)
+        const day_id = req.body.dayId
 
         ActivitiesService.getById(db, activity_id)
             .then(activity => {
@@ -80,6 +79,27 @@ activitiesRouter
     .get((req, res, next) => {
         res.json(sanitizeActivities(res.activity))
     })
+    .patch(jsonParser, (req, res, next) => {
+        const db = req.app.get('db')
+        const id = req.params.activity_id
+        console.log(id)
+        const { activity, meridiem, start_time, day_id } =  req.body
+        const updatedActivity = { activity, meridiem, start_time, day_id }
+
+        const numValues = Object.values(updatedActivity).filter(Boolean).length
+        if (numValues === 0) {
+            return res.status(400).json({
+                error: { message: 'Request body must contain value to update'}
+            })
+        }
+
+        ActivitiesService.updateActivity(db, id, updatedActivity)
+            .then(activity => {
+                res
+                    .status(201).json(sanitizeActivities(activity))
+            })
+            .catch(next)
+    })
 //     .delete((req, res, next) => {
 //         const db = req.app.get('db')
 //         const id = req.params.activity_id
@@ -90,27 +110,5 @@ activitiesRouter
 //             )
 //             .catch(next)
 //     })
-//     .patch(jsonParser, (req, res, next) => {
-//         const db = req.app.get('db')
-//         const id = req.params.activity_id
-
-//         const { name, city, country} =  req.body
-//         const updatedactivity = { name, city, country }
-
-//         const numValues = Object.values(updatedactivity).filter(Boolean).length
-//         if (numValues === 0) {
-//             return res.status(400).json({
-//                 error: { message: 'Request body must contain value to update'}
-//             })
-//         }
-
-//         ActivitiesService.updateActivity(db, id, updatedactivity)
-//             .then(activity => {
-//                 res
-//                     .status(204).end()
-//             })
-//             .catch(next)
-//     })
-
 
 module.exports = activitiesRouter

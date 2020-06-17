@@ -23,9 +23,9 @@ const ActivitiesService = {
     //     return db('activities').where({ id }).delete()
     // },
 
-    // updateActivity(db, id, newActivityInfo) {
-    //     return db('activities').where({ id }).update(newActivityInfo)
-    // },
+    updateActivity(db, id, newActivityInfo) {
+        return db('activities').where({ id }).update(newActivityInfo)
+    },
 }
 
 module.exports = ActivitiesService
