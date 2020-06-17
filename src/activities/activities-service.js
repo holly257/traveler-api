@@ -4,12 +4,12 @@ const ActivitiesService = {
         .where('day_id', day_id)
     },
 
-    // insertActivity(db, newActivity) {
-    //     return db.insert(newActivity).into('activities')
-    //         .returning('*').then(rows => {
-    //             return rows[0]
-    //         })
-    // },
+    insertActivity(db, newActivity) {
+        return db.insert(newActivity).into('activities')
+            .returning('*').then(rows => {
+                return rows[0]
+            })
+    },
 
     getById(db, activity_id) {
         return db.from('activities').select('*')

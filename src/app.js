@@ -35,7 +35,7 @@ app.use('/api/users', usersRouter)
 app.use('/api/trips', tripsRouter)
 
 app.use('/api/days', daysRouter)
-// app.use('/api/trips', activitiesRouter)
+app.use('/api/activities', activitiesRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello Traveler')

@@ -5,6 +5,8 @@ const xss = require('xss')
 const path = require('path')
 const jsonParser = express.json()
 const ActivitiesService = require('./Activities-service')
+const { requireAuth } = require('../middleware/jwt-auth')
+
 
 const sanitizeActivities = activity => ({
     id: activity.id,
@@ -15,7 +17,9 @@ const sanitizeActivities = activity => ({
 })
 
 activitiesRouter
-    .route('/:trip_id/days/:day_id/activities')
+    .route('/')
+    // .route('/:trip_id/days/:day_id/activities')
+    .all(requireAuth)
     .get((req, res, next) => {
         const db = req.app.get('db')
         const day_id = req.params.day_id
@@ -26,32 +30,35 @@ activitiesRouter
             })
             .catch(next)
     })
-//     .post(jsonParser, (req, res, next) => {
-//         const db = req.app.get('db')
-//         const { name, city, country, user_id } =  req.body
-//         const newactivity = { name, city, country, user_id }
+    .post(jsonParser, (req, res, next) => {
+        const db = req.app.get('db')
+        const { activity, meridiem, start_time, day_id } =  req.body
+        
+        const newactivity = { activity, meridiem, start_time, day_id }
 
-//         for(const [key, value] of Object.entries(newactivity)) {
-//             if (value ==  null) {
-//                 return res.status(400).json({
-//                     error: { message: `Missing ${key} in request body`}
-//                 })
-//             }
-//         }
+        for(const [key, value] of Object.entries(newactivity)) {
+            if (value ==  null) {
+                return res.status(400).json({
+                    error: { message: `Missing ${key} in request body`}
+                })
+            }
+        }
+        console.log(newactivity)
 
-//         ActivitiesService.insertActivity(db, newactivity)
-//             .then(activity => {
-//                 res
-//                     .status(201)
-//                     .location(path.posix.join(req.originalUrl, `/${activity.id}`))
-//                     .json(sanitizeActivities(activity))
-//             })
-//             .catch(next)
-//     })
+        ActivitiesService.insertActivity(db, newactivity)
+            .then(activity => {
+                res
+                    .status(201)
+                    .location(path.posix.join(req.originalUrl, `/${activity.id}`))
+                    .json(sanitizeActivities(activity))
+            })
+            .catch(next)
+    })
 
 activitiesRouter
-    .route('/:trip_id/days/:day_id/activities/:activity_id')
-    .all((req, res, next) => {
+    .route('/:activity_id')
+    // .route('/:trip_id/days/:day_id/activities/:activity_id')
+    .all(requireAuth, (req, res, next) => {
         const db = req.app.get('db')
         const activity_id = req.params.activity_id
         const day_id = req.params.day_id
