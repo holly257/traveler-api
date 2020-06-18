@@ -188,7 +188,7 @@ describe.only('users-router endpoints', () => {
                     .post('/api/users')
                     .send(userBadEmail)
                     .expect(400, {
-                            error: { message: `Email must contain '@' symbol` }
+                            error: `Email format is incorrect`
                         })
         })
 

@@ -1,4 +1,5 @@
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/
+const REGEX_EMAIL = /^\S+@\S+\.\S+$/
 const bcrypt = require('bcryptjs')
 
 const UsersService = {
@@ -23,6 +24,12 @@ const UsersService = {
         }
         if(!REGEX_UPPER_LOWER_NUMBER_SPECIAL.test(password)) {
             return 'Password must contain 1 upper case, lower case, number and special character'
+        }
+    },
+
+    validateEmail(email) {
+        if(!REGEX_EMAIL.test(email)) {
+            return `Email format is incorrect`
         }
     },
 

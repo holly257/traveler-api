@@ -401,19 +401,17 @@ function makeMaliciousTrip(trip) {
 
 function makeMaliciousUser() {
     const maliciousUser = {
-        
-        username: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+        username: `image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
         fullname: 'Naughty naughty very naughty <script>alert("xss");</script>', 
         password: '11AAaabb!!Naughty naughty very naughty <script>alert("xss");</script>', 
-        email: '@Naughty naughty very naughty <script>alert("xss");</script>',
+        email: 'hey@gmail.com<script>alert("xss");</script>',
         
     }
-    const expectedUser = {
-        
-        username: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
+    const expectedUser = { 
+        username: `image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
         fullname: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
         password: '11AAaabb!!Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
-        email: '@Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
+        email: 'hey@gmail.com&lt;script&gt;alert(\"xss\");&lt;/script&gt;',
     }
     return {
       maliciousUser,
