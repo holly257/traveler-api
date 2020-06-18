@@ -1,7 +1,6 @@
 const ActivitiesService = {
-    getAllActivities(db, day_id) {
+    getAllActivities(db) {
         return db.select('*').from('activities')
-        .where('day_id', day_id)
     },
 
     insertActivity(db, newActivity) {
@@ -17,9 +16,9 @@ const ActivitiesService = {
             
     },
 
-    // deleteActivity(db, id) {
-    //     return db('activities').where({ id }).delete()
-    // },
+    deleteActivity(db, id) {
+        return db('activities').where('id', id).delete()
+    },
 
     updateActivity(db, id, newActivityInfo) {
         return db('activities').where({ id }).update(newActivityInfo)

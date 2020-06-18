@@ -7,7 +7,6 @@ const jsonParser = express.json()
 const ActivitiesService = require('./Activities-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 
-
 const sanitizeActivities = activity => ({
     id: activity.id,
     activity: xss(activity.activity),
@@ -21,9 +20,8 @@ activitiesRouter
     .all(requireAuth)
     .get((req, res, next) => {
         const db = req.app.get('db')
-        const day_id = req.params.day_id
 
-        ActivitiesService.getAllActivities(db, day_id)
+        ActivitiesService.getAllActivities(db)
             .then(activities => {
                 res.json(activities.map(sanitizeActivities))
             })
@@ -32,7 +30,6 @@ activitiesRouter
     .post(jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const { activity, meridiem, start_time, day_id } =  req.body
-        
         const newactivity = { activity, meridiem, start_time, day_id }
 
         for(const [key, value] of Object.entries(newactivity)) {
@@ -42,7 +39,6 @@ activitiesRouter
                 })
             }
         }
-        console.log(newactivity)
 
         ActivitiesService.insertActivity(db, newactivity)
             .then(activity => {
@@ -59,12 +55,10 @@ activitiesRouter
     .all(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const activity_id = req.params.activity_id
-        const day_id = req.body.dayId
-
+        
         ActivitiesService.getById(db, activity_id)
             .then(activity => {
-                //not working
-                if(!activity.day_id === day_id) {
+                if(!activity) {
                     return res.status(404).json({
                         error: { message: 'Activity does not exist'}
                     })
@@ -80,7 +74,7 @@ activitiesRouter
     .patch(jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.activity_id
-        console.log(id)
+        
         const { activity, meridiem, start_time, day_id } =  req.body
         const updatedActivity = { activity, meridiem, start_time, day_id }
 
@@ -98,17 +92,15 @@ activitiesRouter
             })
             .catch(next)
     })
-    //get this delete working
+    .delete((req, res, next) => {
+        const db = req.app.get('db')
+        const id = req.params.activity_id
 
-//     .delete((req, res, next) => {
-//         const db = req.app.get('db')
-//         const id = req.params.activity_id
-
-//         ActivitiesService.deleteActivity(db, id)
-//             .then(activity =>
-//                 res.status(204).end()
-//             )
-//             .catch(next)
-//     })
+        ActivitiesService.deleteActivity(db, id)
+            .then(activity =>
+                res.status(204).end()
+            )
+            .catch(next)
+    })
 
 module.exports = activitiesRouter

@@ -36,7 +36,7 @@ describe('trips-router endpoints', () => {
             return db.into('trips').insert(testTrips)
         })
 
-        it.only(`GET /api/trips responds with 200 and all of the reviews for that user`, () => {
+        it(`GET /api/trips responds with 200 and all of the reviews for that user`, () => {
             const expectedTrips = testTrips.filter(trip => trip.user_id == testUsers[0].id)
             return supertest(app)
                 .get('/api/trips')

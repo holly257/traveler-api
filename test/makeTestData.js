@@ -377,6 +377,25 @@ function makeMaliciousUser() {
     }
 }
 
+function makeMaliciousActivity(){
+    const maliciousActivity = {
+        activity: 'Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.',
+        meridiem: 'am',
+        start_time: 8,
+        day_id: 2
+    }
+    const expectedActivity = {
+        activity: 'Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.',
+        meridiem: 'am',
+        start_time: 8,
+        day_id: 2
+    }
+    return {
+        maliciousActivity,
+        expectedActivity
+    }
+}
+
 function makeAuthHeader(user, secret = process.env.JWT_SECRET){
     const token = jwt.sign({user_id: user.id}, secret, {
         subject: user.username,
@@ -395,6 +414,7 @@ module.exports = {
     makeMaliciousReview,
     makeMaliciousTrip,
     makeMaliciousUser,
+    makeMaliciousActivity,
 
     cleanTables,
     cleanTablesNotUsers,
