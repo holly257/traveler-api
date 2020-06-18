@@ -54,39 +54,45 @@ tripsRouter
 
 tripsRouter
     .route('/:trip_id')
-    .all(requireAuth, (req, res, next) => {
+    .get(requireAuth, (req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.trip_id
 
         TripsService.getWholeTripById(db, id)
             .then(trip => {
+
                 if(!trip) {
                     return res.status(404).json({
                         error: { message: 'Trip does not exist'}
                     })
                 }
                 res.trip = trip
+                res.json(res.trip)
                 next()
             })
             .catch(next)
     })
-    .get((req, res, next) => {
-        res.json(res.trip)
-    })
-    .delete((req, res, next) => {
+    .delete(requireAuth, (req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.trip_id
 
         TripsService.deleteTrip(db, id)
-            .then(trip =>
+            .then(trip =>{
+
+                //shouldn't need this - not hitting 
+                if(!trip) {
+                    return res.status(404).json({
+                        error: { message: 'Trip does not exist'}
+                    })
+                }
                 res.status(204).end()
-            )
+            })
             .catch(next)
     })
-    .patch(jsonParser, (req, res, next) => {
+    .patch(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.trip_id
-
+        console.log('hello')
         const { name, city, country} =  req.body
         const updatedTrip = { name, city, country }
 
