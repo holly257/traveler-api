@@ -26,7 +26,6 @@ It has 5 main endpoints for requests, 1 for creating users, and 1 for authentica
 <br/>
 
 ### Endpoints 
-<br/>
 
 #### /
 - This endpoint allows you to test your connection to the server. It will send a response containing 'Hello Traveler' if you have connected sucessfully. It is not protected.
