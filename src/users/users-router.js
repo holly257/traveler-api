@@ -35,8 +35,8 @@ usersRouter
             return res.status(400).json({ error: passwordError })
         
         if(!email.includes('@'))
-        return res.status(400).json({
-            error: { message: `Email must contain '@' symbol`}
+            return res.status(400).json({
+                error: { message: `Email must contain '@' symbol`}
         })
 
         UsersService.hasUserWithUsername(
@@ -63,7 +63,9 @@ usersRouter
                                         .location(path.posix.join(req.originalUrl, `/${user.id}`))
                                         .json(sanitizeUsers(user))
                                 })
+                                // .catch(next)
                         })
+                        // .catch(next)
             })
             .catch(next)
     })
