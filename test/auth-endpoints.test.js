@@ -8,7 +8,6 @@ describe('auth endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     
-
     before(() => {
         db = knex({
             client: 'pg',
@@ -23,8 +22,6 @@ describe('auth endpoints', () => {
     beforeEach('insert users', () => {
         helpers.seedUsers(db, testUsers)
     })
-    
-    
     
     describe('POST /api/auth/login', () => {
         const requiredFields = ['username', 'password']
@@ -45,9 +42,7 @@ describe('auth endpoints', () => {
                         error: `Missing '${field}' in request body`
                     })
             })
-            
         })
-
         it(`responds 400 'invalid username or password' when bad username`, () => {
             const invalidUsername = { username: 'nope', password: 'good'}
             return supertest(app)
@@ -57,7 +52,6 @@ describe('auth endpoints', () => {
                     error: 'Incorrect username or password'
                 })
         })
-
         it(`responds 400 'invalid username or password' when bad password`, () => {
             const invalidPass = { username: testUsers[0].username, password: 'bad'}
             return supertest(app)
@@ -67,7 +61,6 @@ describe('auth endpoints', () => {
                     error: 'Incorrect username or password'
                 })
         })
-
 
         //sometimes the signature portion doesn't match, and it fails
         it('responds 200 and JWT auth token using secret when valid credentials', () => {
@@ -92,6 +85,4 @@ describe('auth endpoints', () => {
                 })
         })
     })
-    
-    
 })

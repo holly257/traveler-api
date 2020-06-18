@@ -25,12 +25,11 @@ app.use(cors())
 // app.use(cors({ origin: CLIENT_ORIGIN }))
 
 app.use('/api/search', searchRouter)
-app.use('/api/reviews', reviewsRouter)
 app.use('/api/auth', authRouter)
-
 app.use('/api/users', usersRouter)
-app.use('/api/trips', tripsRouter)
 
+app.use('/api/reviews', reviewsRouter)
+app.use('/api/trips', tripsRouter)
 app.use('/api/days', daysRouter)
 app.use('/api/activities', activitiesRouter)
 
