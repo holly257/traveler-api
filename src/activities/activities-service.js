@@ -17,8 +17,6 @@ const ActivitiesService = {
             
     },
 
-    
-
     // deleteActivity(db, id) {
     //     return db('activities').where({ id }).delete()
     // },

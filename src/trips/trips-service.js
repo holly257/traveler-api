@@ -1,10 +1,10 @@
 const Treeize = require('treeize')
 
 const TripsService = {
-    getAllTrips(db) {
-        return db.select('*').from('trips')
+    // getAllTrips(db) {
+    //     return db.select('*').from('trips')
         
-    },
+    // },
 
     getAllTripsForUser(db, user_id) {
         return db.select('*').from('trips')

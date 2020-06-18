@@ -2,8 +2,6 @@ require('dotenv').config()
 const express = require('express')
 const searchRouter = express.Router()
 const xss = require('xss')
-const path = require('path')
-const jsonParser = express.json()
 const SearchReviewsService = require('./search-service')
 
 const sanitizeReviews = review => ({

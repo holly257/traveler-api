@@ -33,5 +33,6 @@ daysRouter
             })
             .catch(next)
     })
+    //add delete route
 
 module.exports = daysRouter

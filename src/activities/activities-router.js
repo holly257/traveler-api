@@ -18,7 +18,6 @@ const sanitizeActivities = activity => ({
 
 activitiesRouter
     .route('/')
-    // .route('/:trip_id/days/:day_id/activities')
     .all(requireAuth)
     .get((req, res, next) => {
         const db = req.app.get('db')
@@ -57,7 +56,6 @@ activitiesRouter
 
 activitiesRouter
     .route('/:activity_id')
-    // .route('/:trip_id/days/:day_id/activities/:activity_id')
     .all(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const activity_id = req.params.activity_id
@@ -100,6 +98,8 @@ activitiesRouter
             })
             .catch(next)
     })
+    //get this delete working
+
 //     .delete((req, res, next) => {
 //         const db = req.app.get('db')
 //         const id = req.params.activity_id
