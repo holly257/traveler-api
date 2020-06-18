@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe.only('trips-router endpoints', () => {
+describe('trips-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     let testTrips = helpers.makeTestTrips()
@@ -51,7 +51,7 @@ describe.only('trips-router endpoints', () => {
         })
 
         //FAILING - response gotten bc .get to check
-        it.only('DELETE /api/trips/:trip_id responds with 204 and removes the trip', () => {
+        it('DELETE /api/trips/:trip_id responds with 204 and removes the trip', () => {
             const trip_id = 1
             const expectedTrips = testTrips.filter(trip => trip.id !== trip_id)
             return supertest(app)

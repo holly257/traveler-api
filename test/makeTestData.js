@@ -41,7 +41,7 @@ function makeTestReviews() {
             rating: 5, 
             category: 'shopping', 
             comments: 'they have a pretzel day every year, that is pretty awesome. ', 
-            user_id: 3,
+            user_id: 1,
         },
         {
             id: 2,
@@ -49,6 +49,20 @@ function makeTestReviews() {
             image: 'https://vignette.wikia.nocookie.net/theoffice/images/9/92/Vance_Refrigeration_Logo.jpg/revision/latest?cb=20180718165550', 
             image_alt: 'Vance Refrigeration, Air Conditioning & Heating', 
             city: 'Scranton', 
+            country: 'USA', 
+            date_created: '2020-06-08T20:37:33.162Z',
+            address: '1725 Slough Avenue Scranton, PA.', 
+            rating: 4, 
+            category: 'activity', 
+            comments: 'very cool place', 
+            user_id: 2,
+        },
+        {
+            id: 3,
+            name: 'Refrigeration',
+            image: 'https://vignette.wikia.nocookie.net/theoffice/images/9/92/Vance_Refrigeration_Logo.jpg/revision/latest?cb=20180718165550', 
+            image_alt: 'Vance Refrigeration, Air Conditioning & Heating', 
+            city: 'New York', 
             country: 'USA', 
             date_created: '2020-06-08T20:37:33.162Z',
             address: '1725 Slough Avenue Scranton, PA.', 
@@ -325,9 +339,39 @@ function makeMaliciousReview(review) {
         comments: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`, 
         user_id: 1,
     }
+    const maliciousSearch = {
+        id: 911,
+        name: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        image: 'http://placehold.it/500x500',
+        image_alt: 'Naughty naughty very naughty <script>alert("xss");</script>', 
+        city: 'Atlanta', 
+        country: 'Naughty naughty very naughty <script>alert("xss");</script>', 
+        date_created: new Date().toISOString(),
+        address: 'Naughty naughty very naughty <script>alert("xss");</script>', 
+        rating: 4, 
+        category: 'shopping', 
+        comments: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`, 
+        user_id: 1,
+    }
+    const expectedSearch = {
+        id: 911,
+        name: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
+        image: 'http://placehold.it/500x500',
+        image_alt: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
+        city: 'Atlanta', 
+        country: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
+        date_created: new Date().toISOString(),
+        address: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;', 
+        rating: 4, 
+        category: 'shopping', 
+        comments: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`, 
+        user_id: 1,
+    }
     return {
       maliciousReview,
       expectedReview,
+      maliciousSearch,
+      expectedSearch
     }
 }
 

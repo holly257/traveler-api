@@ -73,7 +73,6 @@ searchRouter
                 })
                 .catch(next)
         }
-        
     })
     
 module.exports = searchRouter
