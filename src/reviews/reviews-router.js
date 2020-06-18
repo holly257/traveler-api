@@ -40,8 +40,7 @@ reviewsRouter
         const user_id = req.user.id
         const newReview = { name, image, image_alt, city, country, address, rating, category, comments, user_id }   
         
-        const required = { name, city, country, rating, category, comments, user_id }
-
+        const required = { name, city, country, rating, category, comments, user_id, image }
             for(const [key, value] of Object.entries(required)) {
                 if (value ==  null) {
                     return res.status(400).json({
@@ -49,6 +48,7 @@ reviewsRouter
                     })
                 }
             }
+
         ReviewsService.insertReview(db, newReview)
             .then(review => {
                 res
