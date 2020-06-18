@@ -25,6 +25,9 @@ The Traveler.api has 7 endpoints.
 It has 5 main endpoints for requests, 1 for creating users, and 1 for authentication, and 1 to test your connection.
 <br/>
 
+### Endpoints 
+<br/>
+
 #### /
 - This endpoint allows you to test your connection to the server. It will send a response containing 'Hello Traveler' if you have connected sucessfully. It is not protected.
 
