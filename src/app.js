@@ -25,6 +25,7 @@ app.use(cors())
 // app.use(cors({ origin: CLIENT_ORIGIN }))
 
 app.use('/api/search', searchRouter)
+
 app.use('/api/auth', authRouter)
 app.use('/api/users', usersRouter)
 
