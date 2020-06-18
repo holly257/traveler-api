@@ -66,7 +66,7 @@ searchRouter
                 .then(reviews => {
                     if(!reviews.length) {
                         return res.status(404).json({ 
-                            error: { message: 'City with category has not been reviewed yet' }
+                            error: { message: 'City with that category has not been reviewed yet' }
                         })
                     }
                     res.json(reviews.map(sanitizeReviews))

@@ -4,7 +4,7 @@ const app = require('../src/app')
 const helpers = require('./makeTestData')
 const bcrypt = require('bcryptjs')
 
-describe.only('users-router endpoints', () => {
+describe('users-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
 

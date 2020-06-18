@@ -102,7 +102,7 @@ describe('search-router endpoints', () => {
                 .get('/api/search/term')
                 .query(newSearch)
                 .expect(404, {
-                    error: { message: 'City with category has not been reviewed yet'}
+                    error: { message: 'City with that category has not been reviewed yet'}
                 })
         })
     })  
