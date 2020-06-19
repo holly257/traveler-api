@@ -22,9 +22,9 @@ tripsRouter
         const db = req.app.get('db')
         const user_id = req.user.id
 
-        TripsService.getAllTripsForUser(db, user_id)
+        TripsService.getWholeTripsForUser(db, user_id)
             .then(trips => {
-                res.json(trips.map(sanitizeTrips))
+                res.json(trips)
             })
             .catch(next)
     })
@@ -54,24 +54,6 @@ tripsRouter
 
 tripsRouter
     .route('/:trip_id')
-    .get(requireAuth, (req, res, next) => {
-        const db = req.app.get('db')
-        const id = req.params.trip_id
-
-        TripsService.getWholeTripById(db, id)
-            .then(trip => {
-
-                if(!trip) {
-                    return res.status(404).json({
-                        error: { message: 'Trip does not exist'}
-                    })
-                }
-                res.trip = trip
-                res.json(res.trip)
-                next()
-            })
-            .catch(next)
-    })
     .delete(requireAuth, (req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.trip_id

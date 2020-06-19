@@ -74,7 +74,7 @@ activitiesRouter
     .patch(jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.activity_id
-        
+        console.log(id)
         const { activity, meridiem, start_time, day_id } =  req.body
         const updatedActivity = { activity, meridiem, start_time, day_id }
 
