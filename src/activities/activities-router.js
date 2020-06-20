@@ -4,7 +4,7 @@ const activitiesRouter = express.Router()
 const xss = require('xss')
 const path = require('path')
 const jsonParser = express.json()
-const ActivitiesService = require('./Activities-service')
+const ActivitiesService = require('./activities-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 
 const sanitizeActivities = activity => ({
