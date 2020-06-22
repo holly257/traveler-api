@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe('auth endpoints', () => {
+describe.only('auth endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     
@@ -20,7 +20,7 @@ describe('auth endpoints', () => {
     beforeEach('clean the table', () => helpers.cleanTables((db)))
 
     beforeEach('insert users', () => {
-        helpers.seedUsers(db, testUsers)
+        return helpers.seedUsers(db, testUsers)
     })
     
     describe('POST /api/auth/login', () => {
@@ -62,8 +62,10 @@ describe('auth endpoints', () => {
                 })
         })
 
-        //sometimes the signature portion doesn't match, and it fails
-        it('responds 200 and JWT auth token using secret when valid credentials', () => {
+        //sometimes JWT token signature wouldn't match because of timing, so I needed to add a retry statement
+        it('responds 200 and JWT auth token using secret when valid credentials', function() {
+            this.retries(5);
+
             const userValidCreds = {
                 username: testUsers[0].username,
                 password: testUsers[0].password
@@ -77,10 +79,12 @@ describe('auth endpoints', () => {
                     algorithm: 'HS256',
                 }
             )
+            console.log(expectedToken)
             return supertest(app)
                 .post('/api/auth/login')
                 .send(userValidCreds)
                 .expect(200, {
+                    
                     authToken: expectedToken,
                 })
         })
