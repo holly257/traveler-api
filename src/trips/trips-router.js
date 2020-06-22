@@ -12,8 +12,7 @@ const sanitizeTrips = trip => ({
     name: xss(trip.name),
     city: xss(trip.city), 
     country: xss(trip.country),
-    date_created: trip.date_created,
-    user_id: trip.user_id
+    user_id: trip.user_id,
 })
 
 tripsRouter
@@ -59,9 +58,7 @@ tripsRouter
         const id = req.params.trip_id
 
         TripsService.deleteTrip(db, id)
-            .then(trip =>{
-
-                //shouldn't need this - not hitting 
+            .then(trip =>{ 
                 if(!trip) {
                     return res.status(404).json({
                         error: { message: 'Trip does not exist'}

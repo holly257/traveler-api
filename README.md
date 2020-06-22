@@ -61,12 +61,11 @@ It has 5 main endpoints for requests, 1 for creating users, and 1 for authentica
 <br/>
 
 #### /api/trips
-- The trips route has GET, POST, GET by ID, DELETE, and PATCH requests after a user has been authenticated with logging in - these all requie a JWT token in the header.
-- GET responds with all of the trips that match that users ID - which is given from the JWT auth token.
+- The trips route has GET, POST, DELETE, and PATCH requests after a user has been authenticated with logging in - these all requie a JWT token in the header.
+- GET responds with all of the trips, days, and activities that match that users ID - which is given from the JWT auth token.
 - The POST route takes trip data from the request body, checks for required arguments and responds with 201 when successful.
 - The POST only takes the required arguments, and only interacts with the trips database. It will not accept information about days or activities. 
 - POST required arguments: name, city, country, user_id.
-- THE GET by ID route takes the trip id as a parameter and will return all of the trip, day, and activity information about the trip. It will respond 404 if the trip does not exist.
 - The DELETE api/trips/:trip_id takes the trip ID as a parameter and responds with a 204 for a successful delete request. It will also respond 404 if the trip does not exist. 
 - The PATCH api/trips/:trip_id takes the trip ID as a parameter and will update any fields it is given. It will respond 400 if no fields are given, but it does not have required fields. It will also respond 404 if the trip ID does not exist.
 <br/>

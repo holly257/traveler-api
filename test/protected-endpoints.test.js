@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./makeTestData')
 
-describe('Protected endpoints', () => {
+describe.only('Protected endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     let testReviews = helpers.makeTestReviews()
@@ -36,10 +36,6 @@ describe('Protected endpoints', () => {
         {
             name: 'GET /api/trips',
             path: '/api/trips'
-        },
-        {
-            name: 'GET /api/trips/:trip_id',
-            path: '/api/trips/1'
         },
         {
             name: 'GET /api/activities',
@@ -184,10 +180,6 @@ describe('Protected endpoints', () => {
     })
 
     const protectedPatchEndpoints = [
-        {
-            name: 'PATCH /api/trips/:trip_id',
-            path: '/api/trips/1'
-        },
         {
             name: 'PATCH /api/trips/:trip_id',
             path: '/api/trips/1'

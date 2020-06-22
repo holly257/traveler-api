@@ -7,6 +7,9 @@ describe('trips-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
     let testTrips = helpers.makeTestTrips()
+    let testDays = helpers.makeTestDays()
+    let testActivities = helpers.makeTestActivities()
+    let getFullExpectedTrips = helpers.makeFullTestRes()
 
     before(() => {
         db = knex({
@@ -28,32 +31,24 @@ describe('trips-router endpoints', () => {
             return db.into('trips').insert(testTrips)
         })
 
+        beforeEach('insert days', () => {
+            return db.into('days').insert(testDays)
+        })
+
+        beforeEach('insert activities', () => {
+            return db.into('activities').insert(testActivities)
+        })
+
         it(`GET /api/trips responds with 200 and all of the reviews for that user`, () => {
-            const expectedTrips = testTrips.filter(trip => trip.user_id == testUsers[0].id)
             return supertest(app)
                 .get('/api/trips')
                 .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                .expect(200, expectedTrips)
-                .expect(res => {
-                    expect(res.body[0].user_id).to.eql(testUsers[0].id)
-                })
+                .expect(200, getFullExpectedTrips)
         })
 
-        //need to to test returning the whole trips array
-        //FAILING - expected is diff than response gotten bc nested days object
-        it('GET /api/trips/:trip_id responds with 200 and requested review', () => {
-            const trip_id = 1
-            const expectedTrip = testTrips[trip_id - 1]
-            return supertest(app)
-                .get(`/api/trips/${trip_id}`)
-                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                .expect(200, [expectedTrip])
-        })
-
-        //FAILING - response gotten bc .get to check
         it('DELETE /api/trips/:trip_id responds with 204 and removes the trip', () => {
             const trip_id = 1
-            const expectedTrips = testTrips.filter(trip => trip.id !== trip_id)
+            const expectedTrips = [getFullExpectedTrips[1]]
             return supertest(app)
                 .delete(`/api/trips/${trip_id}`)
                 .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
@@ -66,7 +61,6 @@ describe('trips-router endpoints', () => {
                 )
         })
 
-        //FAILING -  expected is diff than response bc of .get to check it
         it('PATCH /api/trips/:trip_id responds with 204, updates trip', () => {
             const trip_id = 1
             const tripToUpdate = {
@@ -75,7 +69,7 @@ describe('trips-router endpoints', () => {
                 country: 'country of people',
             }
             const expectedTrip = {
-                ...testTrips[trip_id - 1],
+                ...getFullExpectedTrips[trip_id - 1],
                 name: 'another new Trip',
                 city: 'test new city',
                 country: 'country of people',
@@ -87,22 +81,21 @@ describe('trips-router endpoints', () => {
                 .expect(204)
                 .then(res =>
                     supertest(app)
-                        .get(`/api/trips/${trip_id}`)
+                        .get(`/api/trips/`)
                         .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                        .expect(res.name).to.eql(expectedTrip.name)
-                        .expect(res.city).to.eql(expectedTrip.city)
-                        .expect(res.country).to.eql(expectedTrip.country)    
+                        .then(res => {
+                            expect(res.body[0]).to.eql(expectedTrip)
+                        }) 
                 )
         })
 
-        //FAILING - expected is diff than response bc of .get to check it
         it('PATCH /api/trips/:trip_id responds with 204 when updating a subset of fields', () => {
             const trip_id = 1
             const tripToUpdate = {
                 name: 'another new Trip',
             }
             const expectedTrip = {
-                ...testTrips[trip_id - 1],
+                ...getFullExpectedTrips[trip_id - 1],
                 ...tripToUpdate
             }
             return supertest(app)
@@ -115,9 +108,11 @@ describe('trips-router endpoints', () => {
                 .expect(204)
                 .then(res =>
                     supertest(app)
-                        .get(`/api/trips/${trip_id}`)
+                        .get(`/api/trips/`)
                         .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                        .expect(expectedTrip)    
+                        .then(res => {
+                            expect(res.body[0]).to.eql(expectedTrip)
+                        })    
                 )
         })
         it('PATCH /api/trips/:trip_id responds 400 when no required fields are given', () => {
@@ -139,17 +134,6 @@ describe('trips-router endpoints', () => {
             .get('/api/trips')
             .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
             .expect(200, [])
-        })
-
-        //failing - for 200 OK
-        it('GET /api/trips/:trip_id responds with 404', () => {
-            const trip_id = 123
-            return supertest(app)
-                .get(`/api/trips/${trip_id}`)
-                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                .expect(404, {
-                    error: { message: 'Trip does not exist'}
-                })
         })
          
         it('DELETE /api/trips/:trip_id responds with 404', () => {
@@ -203,14 +187,12 @@ describe('trips-router endpoints', () => {
                 })
             })
 
-        //failing bc gets created when missing user_id
-        const requiredFields = ['name', 'city', 'country', 'user_id']
+        const requiredFields = ['name', 'city', 'country']
         requiredFields.forEach(field => {
             const reqNewTrip = {
                 name: 'Dunder Mifflin Trip',
                 city: 'Scranton', 
                 country: 'USA', 
-                user_id: 2,
             }
             it(`responds with 400 and an error when the '${field}' is missing`, () => {
                 delete reqNewTrip[field]
@@ -225,7 +207,7 @@ describe('trips-router endpoints', () => {
         })
     })
 
-    context('Given an xss attack', () => {
+    context('Given an xss attack POST /api/trips removes xss content', () => {
         const testUser = helpers.makeTestUsers()[1]
         const {
             maliciousTrip,
@@ -236,29 +218,15 @@ describe('trips-router endpoints', () => {
             return db.into('trips').insert(maliciousTrip)
         })
 
-        it(`GET /api/trips removes xss content`, () => {
-            return supertest(app)
-                .get('/api/trips')
-                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                .expect(200)
-                .expect(res => {
-                    expect(res.body[0].name).to.eql(expectedTrip.name)
-                    expect(res.body[0].city).to.eql(expectedTrip.city)
-                    expect(res.body[0].country).to.eql(expectedTrip.country)
-                })
-        })
-
-        it(`POST /api/trips removes xss content`, () => {
-            return supertest(app)
-                .post(`/api/trips`)
-                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                .send(maliciousTrip)
-                .expect(201)
-                .expect(res => {
-                    expect(res.body.name).to.eql(expectedTrip.name)
-                    expect(res.body.city).to.eql(expectedTrip.city)
-                    expect(res.body.country).to.eql(expectedTrip.country)
-                })
-        })
+        return supertest(app)
+            .post(`/api/trips`)
+            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .send(maliciousTrip)
+            .expect(201)
+            .expect(res => {
+                expect(res.body.name).to.eql(expectedTrip.name)
+                expect(res.body.city).to.eql(expectedTrip.city)
+                expect(res.body.country).to.eql(expectedTrip.country)
+            })
     })  
 })

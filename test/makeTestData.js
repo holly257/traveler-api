@@ -81,7 +81,6 @@ function makeTestTrips() {
             name: 'Weekend Trip',
             city: 'test city',
             country: 'USA',
-            date_created: '2020-06-08T20:37:33.162Z',
             user_id: 1
         },
         {
@@ -89,7 +88,6 @@ function makeTestTrips() {
             name: 'Other Trip',
             city: 'New city',
             country: 'Thailand',
-            date_created: '2020-06-08T20:37:33.162Z',
             user_id: 1
         },
         {
@@ -97,7 +95,6 @@ function makeTestTrips() {
             name: 'Last one',
             city: 'City Name',
             country: 'South Africa',
-            date_created: '2020-06-09T20:37:33.162Z',
             user_id: 2
         },
     ]
@@ -239,6 +236,143 @@ function makeTestActivities() {
             "meridiem": "am",
             "start_time": 8,
             "day_id": 6
+        }
+    ]
+}
+
+function makeFullTestRes() {
+    return [
+        {
+            "city": "test city",
+            "country": "USA",
+            "days": [
+                {
+                    "activities": [
+                        {
+                            "activity": "wake up",
+                            "day_id": 1,
+                            "id": 1,
+                            "meridiem": "am",
+                            "start_time": 8,
+                        },
+                        {
+                            "activity": "breakfast at cafe",
+                            "day_id": 1,
+                            "id": 2,
+                            "meridiem": "am",
+                            "start_time": 9,
+                        },
+                        {
+                            "activity": "morning walk",
+                            "day_id": 1,
+                            "id": 14,
+                            "meridiem": "am",
+                            "start_time": 7,
+                        }
+                    ],
+                    "days_id": 1,
+                    "trip_id": 1,
+                },
+                {
+                    "activities": [
+                        {
+                            "activity": "wake up",
+                            "day_id": 5,
+                            "id": 11,
+                            "meridiem": "am",
+                            "start_time": 10,
+                        },
+                        {
+                            "activity": "tour of Stari Most",
+                            "day_id": 5,
+                            "id": 12,
+                            "meridiem": "pm",
+                            "start_time": 2,
+                        }
+                    ],
+                    "days_id": 5,
+                    "trip_id": 1,
+                },
+                {
+                    "activities": [
+                        {
+                            "activity": "breakfast and coffee",
+                            "day_id": 6,
+                            "id": 13,
+                            "meridiem": "am",
+                            "start_time": 11,
+                        },
+                        {
+                            "activity": "breakfast at cafe",
+                            "day_id": 6,
+                            "id": 15,
+                            "meridiem": "am",
+                            "start_time": 8,
+                        }
+                    ],
+                    "days_id": 6,
+                    "trip_id": 1,
+                }
+            ],
+            "id": 1,
+            "name": "Weekend Trip",
+            "user_id": 1,
+        },
+        {
+            "city": "New city",
+            "country": "Thailand",
+            "days": [
+                {
+                    "activities": [
+                        {
+                            "activity": "get up",
+                            "day_id": 2,
+                            "id": 3,
+                            "meridiem": "am",
+                            "start_time": 10,
+                        },
+                        {
+                            "activity": "breakfast at restaurant",
+                            "day_id": 2,
+                            "id": 4,
+                            "meridiem": "am",
+                            "start_time": 11,
+                        }
+                    ],
+                    "days_id": 2,
+                    "trip_id": 2,
+                },
+                {
+                    "activities": [
+                        {
+                            "activity": "wake up",
+                            "day_id": 3,
+                            "id": 5,
+                            "meridiem": "am",
+                            "start_time": 9,
+                        },
+                        {
+                            "activity": "breakfast on beach",
+                            "day_id": 3,
+                            "id": 6,
+                            "meridiem": "am",
+                            "start_time": 11,
+                        },
+                        {
+                            "activity": "lunch with friend",
+                            "day_id": 3,
+                            "id": 7,
+                            "meridiem": "pm",
+                            "start_time": 2,
+                        }
+                    ],
+                    "days_id": 3,
+                    "trip_id": 2,
+                }
+            ],
+            "id": 2,
+            "name": "Other Trip",
+            "user_id": 1
         }
     ]
 }
@@ -452,6 +586,7 @@ module.exports = {
     makeTestTrips,
     makeTestDays,
     makeTestActivities,
+    makeFullTestRes,
     
     makeMaliciousReview,
     makeMaliciousTrip,
