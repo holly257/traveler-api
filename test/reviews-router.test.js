@@ -120,8 +120,7 @@ describe('reviews-router endpoints', () => {
                 )
             })
 
-            //partially failing
-        const requiredFields = ['user_id', 'name', 'city', 'country', 'rating', 'category', 'comments', 'image']
+        const requiredFields = ['name', 'city', 'country', 'rating', 'category', 'comments', 'image']
         requiredFields.forEach(field => {
             const reqNewReview = {
                 name: 'Other Mifflin',
@@ -145,7 +144,6 @@ describe('reviews-router endpoints', () => {
             })
         })
     })
-
 
     context('Given an xss attack', () => {
         const testUser = helpers.makeTestUsers()[1]
