@@ -71,7 +71,7 @@ tripsRouter
     .patch(requireAuth, jsonParser, (req, res, next) => {
         const db = req.app.get('db')
         const id = req.params.trip_id
-        console.log('hello')
+         
         const { name, city, country} =  req.body
         const updatedTrip = { name, city, country }
 
