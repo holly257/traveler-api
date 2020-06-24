@@ -2,9 +2,13 @@
 
 This is the api for my capstone project, called Traveler.
 
-## Set up
+## Set Up
 
 Deployed App: https://infinite-beach-15361.herokuapp.com/
+
+## Summary
+
+Traveler allows users to create and browse reviews of things to do on a trip. They can then take those ideas and create, edit, and save a trip itinerary.
 
 ## Technology Used
 
@@ -86,3 +90,19 @@ It has 5 main endpoints for requests, 1 for creating users, and 1 for authentica
 - The DELETE api/activities/:activity_id takes the activity ID as a parameter and responds with a 204 for a successful delete request. It will also respond 404 if the activity does not exist. 
 - The PATCH api/activities/:activity_id takes the activity ID as a parameter and will update any fields it is given. It will respond 400 if no fields are given, but it does not have required fields. It will also respond 404 if the activity ID does not exist.
 <br/>
+
+## Client Screenshots
+
+![Landing Page](/src/images/LandingPage.png)
+
+<br/>
+
+![Reviews List Page](/src/images/ReviewsListPage.png)
+
+<br/>
+
+![Search Page](/src/images/SearchPage.png)
+
+<br/>
+
+![Trip Details Page](/src/images/TripDetailsPage.png)
