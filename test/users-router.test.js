@@ -4,7 +4,7 @@ const app = require('../src/app')
 const helpers = require('./makeTestData')
 const bcrypt = require('bcryptjs')
 
-describe('users-router endpoints', () => {
+describe.only('users-router endpoints', () => {
     let db
     let testUsers = helpers.makeTestUsers()
 
@@ -17,7 +17,8 @@ describe('users-router endpoints', () => {
     })
 
     after('disconnect from db', () => db.destroy(db))
-    beforeEach('clean the table', () => helpers.cleanTables(db))
+    beforeEach('clean the table', () => {
+        return helpers.cleanTables(db)})
 
     it('POST /api/users responds with 201 and creates the new user', () => {
         const newUser = {
@@ -59,10 +60,102 @@ describe('users-router endpoints', () => {
                     })
             )
     })
+
+    const requiredFields = ['username', 'fullname', 'password', 'email']
+    requiredFields.forEach(field => {
+        const reqNewUser = {
+            username: 'anotherTestUser',
+            fullname: 'test user',
+            password: 'countryAndPeople',
+            email: 'test@gmail.com'
+        }
+        it(`responds with 400 and an error when the '${field}' is missing`, () => {
+            delete reqNewUser[field]
+            return supertest(app)
+                .post('/api/users')
+                .send(reqNewUser)
+                .expect(400, {
+                        error: { message: `Missing ${field} in request body`}
+                    })
+        })
+    })
+
+    it(`responds 400 'Password must be longer than 7 characters' when empty password`, () => {
+        const userShortPass = {
+            username: 'anotherTestUser',
+            fullname: 'test user',
+            password: 'hello',
+            email: 'test@gmail.com'
+        }
+        return supertest(app)
+                .post('/api/users')
+                .send(userShortPass)
+                .expect(400, {
+                        error: `Password must be longer than 7 characters`
+                    })
+    })
+    it(`responds 400 'Password must be shorter than 72 characters' when empty password`, () => {
+        const userLongPass = {
+            username: 'anotherTestUser',
+            fullname: 'test user',
+            password: '*'.repeat(73),
+            email: 'test@gmail.com'
+        }
+        return supertest(app)
+                .post('/api/users')
+                .send(userLongPass)
+                .expect(400, {
+                        error: `Password must be shorter than 72 characters`
+                    })
+    })
+    it(`responds 400 when password starts with a space`, () => {
+        const userPassSpace = {
+            username: 'anotherTestUser',
+            fullname: 'test user',
+            password: ' something3#',
+            email: 'test@gmail.com'
+        }
+        return supertest(app)
+                .post('/api/users')
+                .send(userPassSpace)
+                .expect(400, {
+                        error: `Password must not start or end with an empty space`
+                    })
+    })
+    it(`responds 400 when password ends with a space`, () => {
+        const userPassSpace = {
+            username: 'anotherTestUser',
+            fullname: 'test user',
+            password: 'something3# ',
+            email: 'test@gmail.com'
+        }
+        return supertest(app)
+                .post('/api/users')
+                .send(userPassSpace)
+                .expect(400, {
+                        error: `Password must not start or end with an empty space`
+                    })
+    })
+    it(`responds 400 when password isn't complex`, () => {
+        const userPassNotComplex = {
+            username: 'anotherTestUser',
+            fullname: 'test user',
+            password: '11AAaabb',
+            email: 'test@gmail.com'
+        }
+        return supertest(app)
+                .post('/api/users')
+                .send(userPassNotComplex)
+                .expect(400, {
+                        error: `Password must contain 1 upper case, lower case, number and special character`
+                    })
+    })
+
+
     
     context('Given users in the database', () => {
         beforeEach('insert users', () => {
-            helpers.seedUsers(db, testUsers)
+            return helpers.seedUsers(db, testUsers)
         })
         
         it(`responds 400 when username is already taken`, () => {
@@ -79,101 +172,7 @@ describe('users-router endpoints', () => {
                             error: `Username already taken`
                         })
         })
-
-        context('Given users in the database', () => {
-            beforeEach('clean the table', () => helpers.cleanTables((db)))
-
-            const requiredFields = ['username', 'fullname', 'password', 'email']
-            requiredFields.forEach(field => {
-                const reqNewUser = {
-                    username: 'anotherTestUser',
-                    fullname: 'test user',
-                    password: 'countryAndPeople',
-                    email: 'test@gmail.com'
-                }
-                it(`responds with 400 and an error when the '${field}' is missing`, () => {
-                    delete reqNewUser[field]
-                    return supertest(app)
-                        .post('/api/users')
-                        .send(reqNewUser)
-                        .expect(400, {
-                                error: { message: `Missing ${field} in request body`}
-                            })
-                })
-            })
-
-            it(`responds 400 'Password must be longer than 7 characters' when empty password`, () => {
-                const userShortPass = {
-                    username: 'anotherTestUser',
-                    fullname: 'test user',
-                    password: 'hello',
-                    email: 'test@gmail.com'
-                }
-                return supertest(app)
-                        .post('/api/users')
-                        .send(userShortPass)
-                        .expect(400, {
-                                error: `Password must be longer than 7 characters`
-                            })
-            })
-            it(`responds 400 'Password must be shorter than 72 characters' when empty password`, () => {
-                const userLongPass = {
-                    username: 'anotherTestUser',
-                    fullname: 'test user',
-                    password: '*'.repeat(73),
-                    email: 'test@gmail.com'
-                }
-                return supertest(app)
-                        .post('/api/users')
-                        .send(userLongPass)
-                        .expect(400, {
-                                error: `Password must be shorter than 72 characters`
-                            })
-            })
-            it(`responds 400 when password starts with a space`, () => {
-                const userPassSpace = {
-                    username: 'anotherTestUser',
-                    fullname: 'test user',
-                    password: ' something3#',
-                    email: 'test@gmail.com'
-                }
-                return supertest(app)
-                        .post('/api/users')
-                        .send(userPassSpace)
-                        .expect(400, {
-                                error: `Password must not start or end with an empty space`
-                            })
-            })
-            it(`responds 400 when password ends with a space`, () => {
-                const userPassSpace = {
-                    username: 'anotherTestUser',
-                    fullname: 'test user',
-                    password: 'something3# ',
-                    email: 'test@gmail.com'
-                }
-                return supertest(app)
-                        .post('/api/users')
-                        .send(userPassSpace)
-                        .expect(400, {
-                                error: `Password must not start or end with an empty space`
-                            })
-            })
-            it(`responds 400 when password isn't complex`, () => {
-                const userPassNotComplex = {
-                    username: 'anotherTestUser',
-                    fullname: 'test user',
-                    password: '11AAaabb',
-                    email: 'test@gmail.com'
-                }
-                return supertest(app)
-                        .post('/api/users')
-                        .send(userPassNotComplex)
-                        .expect(400, {
-                                error: `Password must contain 1 upper case, lower case, number and special character`
-                            })
-            })
-            
-        })
+    
         it(`responds 400 when email doesn't contain '@' symbol`, () => {
             const userBadEmail = {
                 username: 'anotherTestUser',

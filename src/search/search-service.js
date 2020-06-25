@@ -5,12 +5,12 @@ const SearchReviewsService = {
 
     getBySearchTerm(db, searchTerm) {
         return db.select('*').from('reviews')
-            .where('city', 'like', `%${searchTerm}%`)
+            .whereRaw(`LOWER(city) LIKE ?`, [`%${searchTerm.toLowerCase()}%`])
     },
 
     getBySearchTermAndCategory(db, searchTerm, searchCat) {
         return db.select('*').from('reviews')
-            .where('city', 'like', `%${searchTerm}%`)
+            .whereRaw(`LOWER(city) LIKE ?`, [`%${searchTerm.toLowerCase()}%`])
             .where('category', searchCat)
     },
 
