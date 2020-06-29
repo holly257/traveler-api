@@ -5,8 +5,7 @@ module.exports = {
 
     //what are the || cases for these?
     DATABASE_URL:
-        process.env.DATABASE_URL ||
-        'postgresql://traveler_admin:aksdhfj823@localhost/traveler',
+        process.env.DATABASE_URL || 'postgresql://traveler_admin:aksdhfj823@localhost/traveler',
     TEST_DATABASE_URL:
         process.env.TEST_DATABASE_URL ||
         'postgresql://traveler_admin:aksdhfj823@localhost/traveler_test',
