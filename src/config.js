@@ -11,5 +11,5 @@ module.exports = {
         process.env.TEST_DATABASE_URL ||
         'postgresql://traveler_admin:aksdhfj823@localhost/traveler_test',
 
-    CLIENT_ORIGIN: process.env.DEV_ORIGIN || 'https://traveler.now.sh/',
+    CLIENT_ORIGIN: process.env.DEV_ORIGIN || 'https://traveler.now.sh',
 };
