@@ -14,11 +14,7 @@ const ActivitiesService = {
     },
 
     getById(db, activity_id) {
-        return db
-            .from('activities')
-            .select('*')
-            .where('id', activity_id)
-            .first();
+        return db.from('activities').select('*').where('id', activity_id).first();
     },
 
     deleteActivity(db, id) {

@@ -110,6 +110,47 @@ reviewsRouter
     .get((req, res, next) => {
         res.json(sanitizeReviews(res.review));
     })
+    .patch(jsonParser, (req, res, next) => {
+        const db = req.app.get('db');
+        const {
+            name,
+            image,
+            image_alt,
+            city,
+            country,
+            address,
+            rating,
+            category,
+            comments,
+        } = req.body;
+        const user_id = req.user.id;
+        const editedReview = {
+            name,
+            image,
+            image_alt,
+            city,
+            country,
+            address,
+            rating,
+            category,
+            comments,
+            user_id,
+        };
+
+        const numValues = Object.values(editedReview).filter(Boolean).length;
+        //user can only edit if logged in - so every edit will at least have a user_id
+        if (numValues === 1) {
+            return res.status(400).json({
+                error: { message: 'Request body must contain value to update' },
+            });
+        }
+
+        ReviewsService.updateReview(db, user_id, editedReview)
+            .then(review => {
+                res.status(201).json(sanitizeReviews(review));
+            })
+            .catch(next);
+    })
     .delete((req, res, next) => {
         const db = req.app.get('db');
         const id = req.params.review_id;

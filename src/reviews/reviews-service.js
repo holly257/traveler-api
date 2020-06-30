@@ -20,6 +20,10 @@ const ReviewsService = {
     deleteReview(db, id) {
         return db('reviews').where({ id }).delete();
     },
+
+    updateReview(db, id, newReviewInfo) {
+        return db('reviews').where({ id }).update(newReviewInfo);
+    },
 };
 
 module.exports = ReviewsService;

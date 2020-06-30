@@ -46,9 +46,7 @@ describe('activities-router endpoints', () => {
         it('GET /api/activities/:activity_id  responds with 200 and requested activity', () => {
             const day_id = 1;
             const activity_id = 1;
-            const expectedActivities = testActivities.find(
-                activity => activity.id == activity_id
-            );
+            const expectedActivities = testActivities.find(activity => activity.id == activity_id);
             return supertest(app)
                 .get(`/api/activities/${activity_id}`)
                 .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
@@ -58,9 +56,7 @@ describe('activities-router endpoints', () => {
         it('DELETE /api/activities/:activity_id responds with 204 and removes the trip', () => {
             const id = 1;
             const day_id = 1;
-            const expectedActivities = testActivities.filter(
-                activity => activity.id !== id
-            );
+            const expectedActivities = testActivities.filter(activity => activity.id !== id);
             return supertest(app)
                 .delete(`/api/activities/${id}`)
                 .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
@@ -68,10 +64,7 @@ describe('activities-router endpoints', () => {
                 .then(res =>
                     supertest(app)
                         .get('/api/activities')
-                        .set(
-                            'Authorization',
-                            helpers.makeAuthHeader(testUsers[0])
-                        )
+                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                         .expect(expectedActivities)
                 );
         });
@@ -99,10 +92,7 @@ describe('activities-router endpoints', () => {
                 .then(res =>
                     supertest(app)
                         .get(`/api/activities/${activityId}`)
-                        .set(
-                            'Authorization',
-                            helpers.makeAuthHeader(testUsers[0])
-                        )
+                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                         .expect(expectedActivity)
                 );
         });
@@ -126,10 +116,7 @@ describe('activities-router endpoints', () => {
                 .then(res =>
                     supertest(app)
                         .get(`/api/activities/${activity_id}`)
-                        .set(
-                            'Authorization',
-                            helpers.makeAuthHeader(testUsers[0])
-                        )
+                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                         .expect(expectedActivity)
                 );
         });
@@ -200,17 +187,12 @@ describe('activities-router endpoints', () => {
                     expect(res.body.meridiem).to.eql(newActivity.meridiem);
                     expect(res.body.start_time).to.eql(newActivity.start_time);
                     expect(res.body.day_id).to.eql(newActivity.day_id);
-                    expect(res.headers.location).to.eql(
-                        `/api/activities/${res.body.id}`
-                    );
+                    expect(res.headers.location).to.eql(`/api/activities/${res.body.id}`);
                 })
                 .then(postRes =>
                     supertest(app)
                         .get(`/api/activities/${postRes.body.id}`)
-                        .set(
-                            'Authorization',
-                            helpers.makeAuthHeader(testUsers[0])
-                        )
+                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                         .expect(postRes.body)
                 );
         });
@@ -238,10 +220,7 @@ describe('activities-router endpoints', () => {
 
     context('Given an xss attack', () => {
         const testUser = helpers.makeTestUsers()[1];
-        const {
-            maliciousActivity,
-            expectedActivity,
-        } = helpers.makeMaliciousActivity(testUser);
+        const { maliciousActivity, expectedActivity } = helpers.makeMaliciousActivity(testUser);
 
         beforeEach('insert malicious trip', () => {
             return db.into('activities').insert(maliciousActivity);
@@ -253,9 +232,7 @@ describe('activities-router endpoints', () => {
                 .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                 .expect(200)
                 .expect(res => {
-                    expect(res.body[0].activity).to.eql(
-                        expectedActivity.activity
-                    );
+                    expect(res.body[0].activity).to.eql(expectedActivity.activity);
                 });
         });
 

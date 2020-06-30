@@ -61,10 +61,7 @@ describe('Protected endpoints', () => {
             const invalidSecret = 'bad-secret';
             return supertest(app)
                 .get(endpoint.path)
-                .set(
-                    'Authorization',
-                    helpers.makeAuthHeader(validUser, invalidSecret)
-                )
+                .set('Authorization', helpers.makeAuthHeader(validUser, invalidSecret))
                 .expect(401, {
                     error: 'Unauthorized Request',
                 });
@@ -110,10 +107,7 @@ describe('Protected endpoints', () => {
             const invalidSecret = 'bad-secret';
             return supertest(app)
                 .post(endpoint.path)
-                .set(
-                    'Authorization',
-                    helpers.makeAuthHeader(validUser, invalidSecret)
-                )
+                .set('Authorization', helpers.makeAuthHeader(validUser, invalidSecret))
                 .expect(401, {
                     error: 'Unauthorized Request',
                 });
@@ -159,10 +153,7 @@ describe('Protected endpoints', () => {
             const invalidSecret = 'bad-secret';
             return supertest(app)
                 .delete(endpoint.path)
-                .set(
-                    'Authorization',
-                    helpers.makeAuthHeader(validUser, invalidSecret)
-                )
+                .set('Authorization', helpers.makeAuthHeader(validUser, invalidSecret))
                 .expect(401, {
                     error: 'Unauthorized Request',
                 });
@@ -187,6 +178,10 @@ describe('Protected endpoints', () => {
             name: 'PATCH /api/activities/:activity_id',
             path: '/api/activities/1',
         },
+        {
+            name: 'PATCH /api/reviews/:review_id',
+            path: '/api/reviews/1',
+        },
     ];
 
     protectedPatchEndpoints.forEach(endpoint => {
@@ -200,10 +195,7 @@ describe('Protected endpoints', () => {
             const invalidSecret = 'bad-secret';
             return supertest(app)
                 .patch(endpoint.path)
-                .set(
-                    'Authorization',
-                    helpers.makeAuthHeader(validUser, invalidSecret)
-                )
+                .set('Authorization', helpers.makeAuthHeader(validUser, invalidSecret))
                 .expect(401, {
                     error: 'Unauthorized Request',
                 });

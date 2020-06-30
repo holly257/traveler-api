@@ -43,9 +43,7 @@ activitiesRouter
         ActivitiesService.insertActivity(db, newactivity)
             .then(activity => {
                 res.status(201)
-                    .location(
-                        path.posix.join(req.originalUrl, `/${activity.id}`)
-                    )
+                    .location(path.posix.join(req.originalUrl, `/${activity.id}`))
                     .json(sanitizeActivities(activity));
             })
             .catch(next);
