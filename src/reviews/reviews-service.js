@@ -22,7 +22,7 @@ const ReviewsService = {
     },
 
     updateReview(db, id, newReviewInfo) {
-        return db('reviews').where({ id }).update(newReviewInfo);
+        return db('reviews').where({ id }).update(newReviewInfo).returning('*');
     },
 };
 

@@ -52,7 +52,7 @@ describe('reviews-router endpoints', () => {
                 rating: 4,
                 category: 'activity',
                 comments: 'they have a pretzel day every month.',
-                user_id: testUsers[0].id,
+                id: testUsers[0].id,
             };
             const expectedReviews = {
                 ...testReviews[reviewId - 1],
@@ -66,7 +66,7 @@ describe('reviews-router endpoints', () => {
                 rating: 4,
                 category: 'activity',
                 comments: 'they have a pretzel day every month.',
-                user_id: testUsers[0].id,
+                id: testUsers[0].id,
             };
             return supertest(app)
                 .patch(`/api/reviews/${reviewId}`)
@@ -83,6 +83,7 @@ describe('reviews-router endpoints', () => {
         it('PATCH/api/reviews/:review_id responds with 204 when updating a subset of fields', () => {
             const reviewId = 1;
             const editedReview = {
+                id: 1,
                 name: 'hey Mifflin',
                 image:
                     'https://images.unsplash.com/photo-1527239441953-caffd968d952?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
@@ -90,6 +91,7 @@ describe('reviews-router endpoints', () => {
             };
             const expectedReviews = {
                 ...testReviews[reviewId - 1],
+                id: 1,
                 name: 'hey Mifflin',
                 image:
                     'https://images.unsplash.com/photo-1527239441953-caffd968d952?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
@@ -112,7 +114,7 @@ describe('reviews-router endpoints', () => {
             return supertest(app)
                 .patch(`/api/reviews/${reviewId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                .send({ wrongField: 'nope' })
+                .send({ id: 1 })
                 .expect(400, {
                     error: {
                         message: 'Request body must contain value to update',

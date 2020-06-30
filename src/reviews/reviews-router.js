@@ -113,6 +113,7 @@ reviewsRouter
     .patch(jsonParser, (req, res, next) => {
         const db = req.app.get('db');
         const {
+            id,
             name,
             image,
             image_alt,
@@ -123,8 +124,8 @@ reviewsRouter
             category,
             comments,
         } = req.body;
-        const user_id = req.user.id;
         const editedReview = {
+            id,
             name,
             image,
             image_alt,
@@ -134,20 +135,19 @@ reviewsRouter
             rating,
             category,
             comments,
-            user_id,
         };
 
         const numValues = Object.values(editedReview).filter(Boolean).length;
-        //user can only edit if logged in - so every edit will at least have a user_id
+        //user can only click edit if review exists - so every edit will at least have an id
         if (numValues === 1) {
             return res.status(400).json({
                 error: { message: 'Request body must contain value to update' },
             });
         }
 
-        ReviewsService.updateReview(db, user_id, editedReview)
+        ReviewsService.updateReview(db, id, editedReview)
             .then(review => {
-                res.status(201).json(sanitizeReviews(review));
+                res.status(201).json(sanitizeReviews(review[0]));
             })
             .catch(next);
     })
