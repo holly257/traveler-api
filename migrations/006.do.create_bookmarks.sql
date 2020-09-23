@@ -1,0 +1,5 @@
+CREATE TABLE bookmarks (
+    id SERIAL PRIMARY KEY, 
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    review_id INTEGER REFERENCES reviews(id) ON DELETE CASCADE
+);

@@ -88,6 +88,17 @@ reviewsRouter
             .catch(next);
     });
 
+reviewsRouter.route('/bookmarks').get(requireAuth, (req, res, next) => {
+    const db = req.app.get('db');
+    const user_id = req.user.id;
+
+    ReviewsService.getAllBookmarksForUser(db, user_id)
+        .then(bookmarks => {
+            res.json(bookmarks.map(sanitizeReviews));
+        })
+        .catch(next);
+});
+
 reviewsRouter
     .route('/:review_id')
     .all(requireAuth)
