@@ -12,6 +12,7 @@ const tripsRouter = require('./trips/trips-router');
 const daysRouter = require('./days/days-router');
 const activitiesRouter = require('./activities/activities-router');
 const usersRouter = require('./users/users-router');
+const bookmarksRouter = require('./bookmarks/bookmarks-router');
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 
 app.use('/api/reviews', reviewsRouter);
+app.use('/api/bookmarks', bookmarksRouter);
+
 app.use('/api/trips', tripsRouter);
 app.use('/api/days', daysRouter);
 app.use('/api/activities', activitiesRouter);

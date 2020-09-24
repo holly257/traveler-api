@@ -89,39 +89,6 @@ reviewsRouter
     });
 
 reviewsRouter
-    .route('/bookmarks')
-    .get(requireAuth, (req, res, next) => {
-        const db = req.app.get('db');
-        const user_id = req.user.id;
-
-        ReviewsService.getAllBookmarksForUser(db, user_id)
-            .then(bookmarks => {
-                res.json(bookmarks.map(sanitizeReviews));
-            })
-            .catch(next);
-    })
-    .post(requireAuth, jsonParser, (req, res, next) => {
-        const db = req.app.get('db');
-        const review_id = req.body.id;
-        const user_id = req.user.id;
-
-        let new_bookmark = {
-            review_id,
-            user_id,
-        };
-
-        console.log(new_bookmark);
-
-        ReviewsService.insertBookmark(db, new_bookmark)
-            .then(bookmark => {
-                res.status(201)
-                    .location(path.posix.join(req.originalUrl, `/${bookmark.id}`))
-                    .json(bookmark);
-            })
-            .catch(next);
-    });
-
-reviewsRouter
     .route('/:review_id')
     .all(requireAuth)
     .all((req, res, next) => {
