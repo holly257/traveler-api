@@ -53,6 +53,16 @@ const ReviewsService = {
                 return tree.grow(data).getData();
             });
     },
+
+    insertBookmark(db, newBookmark) {
+        return db
+            .insert(newBookmark)
+            .into('bookmarks')
+            .returning('*')
+            .then(rows => {
+                return rows[0];
+            });
+    },
 };
 
 module.exports = ReviewsService;
