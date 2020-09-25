@@ -6,6 +6,7 @@ const xss = require('xss');
 const jsonParser = express.json();
 const BookmarksService = require('./bookmarks-service');
 const { requireAuth } = require('../middleware/jwt-auth');
+const { runInNewContext } = require('vm');
 
 const sanitizeReviews = review => ({
     id: review.id,
@@ -24,7 +25,8 @@ const sanitizeReviews = review => ({
 
 bookmarksRouter
     .route('/')
-    .get(requireAuth, (req, res, next) => {
+    .all(requireAuth)
+    .get((req, res, next) => {
         const db = req.app.get('db');
         const user_id = req.user.id;
 
@@ -34,7 +36,7 @@ bookmarksRouter
             })
             .catch(next);
     })
-    .post(requireAuth, jsonParser, (req, res, next) => {
+    .post(jsonParser, (req, res, next) => {
         const db = req.app.get('db');
         const review_id = req.body.id;
         const user_id = req.user.id;
@@ -43,6 +45,12 @@ bookmarksRouter
             review_id,
             user_id,
         };
+        console.log(new_bookmark);
+        if (!new_bookmark.review_id) {
+            return res.status(400).json({
+                error: { message: `Missing review_id in request body` },
+            });
+        }
 
         BookmarksService.insertBookmark(db, new_bookmark)
             .then(bookmark => {
@@ -58,7 +66,14 @@ bookmarksRouter.route('/:bookmark_id').delete(requireAuth, (req, res, next) => {
     const id = req.params.bookmark_id;
 
     BookmarksService.deleteBookmark(db, id)
-        .then(review => res.status(204).end())
+        .then(bookmark => {
+            if (!bookmark) {
+                return res.status(404).json({
+                    error: { message: 'Bookmark does not exist' },
+                });
+            }
+            res.status(204).end();
+        })
         .catch(next);
 });
 

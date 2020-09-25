@@ -41,8 +41,7 @@ function makeTestReviews() {
             address: '1725 Slough Avenue Scranton, PA.',
             rating: 5,
             category: 'shopping',
-            comments:
-                'they have a pretzel day every year, that is pretty awesome. ',
+            comments: 'they have a pretzel day every year, that is pretty awesome. ',
             user_id: 1,
         },
         {
@@ -74,6 +73,58 @@ function makeTestReviews() {
             category: 'shopping',
             comments: 'very cool place',
             user_id: 1,
+        },
+    ];
+}
+
+function makeFullTestBookmarks() {
+    return [
+        {
+            id: 1,
+            name: 'Dunder Mifflin',
+            image:
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Dunder_Mifflin%2C_Inc.svg/1200px-Dunder_Mifflin%2C_Inc.svg.png',
+            image_alt: 'Dunder Mifflin Paper Company',
+            city: 'Scranton',
+            country: 'USA',
+            date_created: '2020-06-09T20:37:33.162Z',
+            address: '1725 Slough Avenue Scranton, PA.',
+            rating: 5,
+            category: 'shopping',
+            comments: 'they have a pretzel day every year, that is pretty awesome. ',
+            user_id: 1,
+        },
+        {
+            id: 2,
+            name: 'Vance Refrigeration',
+            image:
+                'https://vignette.wikia.nocookie.net/theoffice/images/9/92/Vance_Refrigeration_Logo.jpg/revision/latest?cb=20180718165550',
+            image_alt: 'Vance Refrigeration, Air Conditioning & Heating',
+            city: 'Scranton',
+            country: 'USA',
+            date_created: '2020-06-08T20:37:33.162Z',
+            address: '1725 Slough Avenue Scranton, PA.',
+            rating: 4,
+            category: 'activity',
+            comments: 'very cool place',
+            user_id: 1,
+        },
+    ];
+}
+
+function makeTestBookmarks() {
+    return [
+        {
+            user_id: 1,
+            review_id: 1,
+        },
+        {
+            user_id: 1,
+            review_id: 2,
+        },
+        {
+            user_id: 2,
+            review_id: 3,
         },
     ];
 }
@@ -386,6 +437,7 @@ function cleanTables(db) {
             .raw(
                 `TRUNCATE
                 reviews,
+                bookmarks,
                 activities,
                 days,
                 trips,
@@ -394,22 +446,14 @@ function cleanTables(db) {
             )
             .then(() =>
                 Promise.all([
-                    trx.raw(
-                        `ALTER SEQUENCE reviews_id_seq minvalue 0 START WITH 1`
-                    ),
-                    trx.raw(
-                        `ALTER SEQUENCE activities_id_seq minvalue 0 START WITH 1`
-                    ),
-                    trx.raw(
-                        `ALTER SEQUENCE days_id_seq minvalue 0 START WITH 1`
-                    ),
-                    trx.raw(
-                        `ALTER SEQUENCE trips_id_seq minvalue 0 START WITH 1`
-                    ),
-                    trx.raw(
-                        `ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`
-                    ),
+                    trx.raw(`ALTER SEQUENCE reviews_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE bookmarks_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE activities_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE days_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE trips_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
                     trx.raw(`SELECT setval('reviews_id_seq', 0)`),
+                    trx.raw(`SELECT setval('bookmarks_id_seq', 0)`),
                     trx.raw(`SELECT setval('activities_id_seq', 0)`),
                     trx.raw(`SELECT setval('days_id_seq', 0)`),
                     trx.raw(`SELECT setval('trips_id_seq', 0)`),
@@ -425,6 +469,7 @@ function cleanTablesNotUsers(db) {
             .raw(
                 `TRUNCATE
                 reviews,
+                bookmarks,
                 activities,
                 days,
                 trips
@@ -432,19 +477,13 @@ function cleanTablesNotUsers(db) {
             )
             .then(() =>
                 Promise.all([
-                    trx.raw(
-                        `ALTER SEQUENCE reviews_id_seq minvalue 0 START WITH 1`
-                    ),
-                    trx.raw(
-                        `ALTER SEQUENCE activities_id_seq minvalue 0 START WITH 1`
-                    ),
-                    trx.raw(
-                        `ALTER SEQUENCE days_id_seq minvalue 0 START WITH 1`
-                    ),
-                    trx.raw(
-                        `ALTER SEQUENCE trips_id_seq minvalue 0 START WITH 1`
-                    ),
+                    trx.raw(`ALTER SEQUENCE reviews_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE bookmarks_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE activities_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE days_id_seq minvalue 0 START WITH 1`),
+                    trx.raw(`ALTER SEQUENCE trips_id_seq minvalue 0 START WITH 1`),
                     trx.raw(`SELECT setval('reviews_id_seq', 0)`),
+                    trx.raw(`SELECT setval('bookmarks_id_seq', 0)`),
                     trx.raw(`SELECT setval('activities_id_seq', 0)`),
                     trx.raw(`SELECT setval('days_id_seq', 0)`),
                     trx.raw(`SELECT setval('trips_id_seq', 0)`),
@@ -461,20 +500,15 @@ function seedUsers(db, users) {
     return db
         .into('users')
         .insert(preppedUsers)
-        .then(() =>
-            db.raw(`SELECT setval('users_id_seq', ?)`, [
-                users[users.length - 1].id,
-            ])
-        );
+        .then(() => db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id]));
 }
 
-function makeMaliciousReview(review) {
+function makeMaliciousReview() {
     const maliciousReview = {
         id: 911,
         name: 'Naughty naughty very naughty <script>alert("xss");</script>',
         image: 'http://placehold.it/500x500',
-        image_alt:
-            'Naughty naughty very naughty <script>alert("xss");</script>',
+        image_alt: 'Naughty naughty very naughty <script>alert("xss");</script>',
         city: 'Naughty naughty very naughty <script>alert("xss");</script>',
         country: 'Naughty naughty very naughty <script>alert("xss");</script>',
         date_created: new Date().toISOString(),
@@ -486,18 +520,13 @@ function makeMaliciousReview(review) {
     };
     const expectedReview = {
         id: 911,
-        name:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        name: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         image: 'http://placehold.it/500x500',
-        image_alt:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
-        city:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
-        country:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        image_alt: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        city: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        country: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         date_created: new Date().toISOString(),
-        address:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        address: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         rating: 4,
         category: 'shopping',
         comments: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
@@ -507,8 +536,7 @@ function makeMaliciousReview(review) {
         id: 911,
         name: 'Naughty naughty very naughty <script>alert("xss");</script>',
         image: 'http://placehold.it/500x500',
-        image_alt:
-            'Naughty naughty very naughty <script>alert("xss");</script>',
+        image_alt: 'Naughty naughty very naughty <script>alert("xss");</script>',
         city: 'Atlanta',
         country: 'Naughty naughty very naughty <script>alert("xss");</script>',
         date_created: new Date().toISOString(),
@@ -520,17 +548,13 @@ function makeMaliciousReview(review) {
     };
     const expectedSearch = {
         id: 911,
-        name:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        name: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         image: 'http://placehold.it/500x500',
-        image_alt:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        image_alt: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         city: 'Atlanta',
-        country:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        country: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         date_created: new Date().toISOString(),
-        address:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        address: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         rating: 4,
         category: 'shopping',
         comments: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
@@ -544,7 +568,47 @@ function makeMaliciousReview(review) {
     };
 }
 
-function makeMaliciousTrip(trip) {
+function makeMaliciouBookmark() {
+    const maliciousBookmark = {
+        id: 1,
+        name: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        image: 'http://placehold.it/500x500',
+        image_alt: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        city: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        country: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        date_created: new Date().toISOString(),
+        address: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        rating: 4,
+        category: 'shopping',
+        comments: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+        user_id: 1,
+    };
+    const expectedBookmark = {
+        id: 1,
+        name: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        image: 'http://placehold.it/500x500',
+        image_alt: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        city: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        country: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        date_created: new Date().toISOString(),
+        address: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        rating: 4,
+        category: 'shopping',
+        comments: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
+        user_id: 1,
+    };
+    const testBookmark = {
+        user_id: 1,
+        review_id: 1,
+    };
+    return {
+        maliciousBookmark,
+        expectedBookmark,
+        testBookmark,
+    };
+}
+
+function makeMaliciousTrip() {
     const maliciousTrip = {
         id: 911,
         name: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
@@ -556,10 +620,8 @@ function makeMaliciousTrip(trip) {
     const expectedTrip = {
         id: 911,
         name: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
-        city:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
-        country:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        city: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        country: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         date_created: new Date().toISOString(),
         user_id: 1,
     };
@@ -573,14 +635,12 @@ function makeMaliciousUser() {
     const maliciousUser = {
         username: `image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
         fullname: 'Naughty naughty very naughty <script>alert("xss");</script>',
-        password:
-            '11AAaabb!!Naughty naughty very naughty <script>alert("xss");</script>',
+        password: '11AAaabb!!Naughty naughty very naughty <script>alert("xss");</script>',
         email: 'hey@gmail.com<script>alert("xss");</script>',
     };
     const expectedUser = {
         username: `image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
-        fullname:
-            'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
+        fullname: 'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         password:
             '11AAaabb!!Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
         email: 'hey@gmail.com&lt;script&gt;alert("xss");&lt;/script&gt;',
@@ -623,12 +683,16 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
 module.exports = {
     makeTestUsers,
     makeTestReviews,
+    makeTestBookmarks,
     makeTestTrips,
     makeTestDays,
+
     makeTestActivities,
     makeFullTestRes,
+    makeFullTestBookmarks,
 
     makeMaliciousReview,
+    makeMaliciouBookmark,
     makeMaliciousTrip,
     makeMaliciousUser,
     makeMaliciousActivity,

@@ -48,6 +48,10 @@ describe('Protected endpoints', () => {
             name: 'GET /api/days',
             path: '/api/days',
         },
+        {
+            name: 'GET /api/bookmarks',
+            path: '/api/bookmarks',
+        },
     ];
 
     protectedGetEndpoints.forEach(endpoint => {
@@ -94,6 +98,10 @@ describe('Protected endpoints', () => {
             name: 'POST /api/activities',
             path: '/api/activities',
         },
+        {
+            name: 'POST /api/bookmarks',
+            path: '/api/bookmarks',
+        },
     ];
 
     protectedPostEndpoints.forEach(endpoint => {
@@ -139,6 +147,10 @@ describe('Protected endpoints', () => {
         {
             name: 'DELETE /api/days/:day_id',
             path: '/api/days/1',
+        },
+        {
+            name: 'DELETE /api/bookmarks/:bookmark_id',
+            path: '/api/bookmarks/1',
         },
     ];
 
