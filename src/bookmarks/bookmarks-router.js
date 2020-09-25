@@ -45,7 +45,7 @@ bookmarksRouter
             review_id,
             user_id,
         };
-        console.log(new_bookmark);
+
         if (!new_bookmark.review_id) {
             return res.status(400).json({
                 error: { message: `Missing review_id in request body` },
