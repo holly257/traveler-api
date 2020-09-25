@@ -85,4 +85,13 @@ INSERT INTO  reviews (name, image, image_alt, city, country, address, rating, ca
         ('Ponce City Market', 'https://www.ajc.com/rf/image_lowres/Pub/p10/AJC/2019/12/30/Videos/4814052.vpx', 'Brick building - ponce city market', 'Atlanta', 'USA', '675 Ponce De Leon Ave NE, Atlatna, Ga', 4, 'shopping', 'Cool place to meet for drinks, dinner, or shopping. Can be a little crowded and sometimes expensive.', 2),
         ('Caffe Bar Fratello', 'https://lh3.googleusercontent.com/p/AF1QipOAmRvR5QJJMbUMrFmkXPb7PWNGkipJHsWOEAy5=w600-k', 'cafe doorway', 'Mostar', 'Bosnia & Herzegovina', 'Mostar 88000, Bosnia & Herzegovina', 5, 'bar/coffee', 'Peaceful place to get your morning coffee', 1);
 
+INSERT INTO bookmarks (user_id, review_id)
+    VALUES
+        (1, 4),
+        (2, 3),
+        (1, 2),
+        (2, 1),
+        (3, 1),
+        (3, 4);
+
 COMMIT;

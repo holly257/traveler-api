@@ -1,3 +1,5 @@
+const Treeize = require('treeize');
+
 const ReviewsService = {
     getAllReviewsForUser(db, user_id) {
         return db.from('reviews').select('*').where('user_id', user_id);
